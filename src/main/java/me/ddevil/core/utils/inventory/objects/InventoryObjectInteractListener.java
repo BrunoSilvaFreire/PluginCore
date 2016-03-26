@@ -5,7 +5,7 @@
  */
 package me.ddevil.core.utils.inventory.objects;
 
-import org.bukkit.event.inventory.InventoryClickEvent;
+import me.ddevil.core.events.inventory.InventoryObjectClickEvent;
 
 /**
  *
@@ -13,5 +13,5 @@ import org.bukkit.event.inventory.InventoryClickEvent;
  */
 public interface InventoryObjectInteractListener {
 
-    public void onInteract(InventoryClickEvent e);
+    public void onInteract(InventoryObjectClickEvent e);
 }
