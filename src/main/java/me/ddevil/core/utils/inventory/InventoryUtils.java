@@ -7,7 +7,7 @@ package me.ddevil.core.utils.inventory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import me.ddevil.core.utils.ItemUtils;
+import me.ddevil.core.utils.items.ItemUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;

@@ -24,6 +24,10 @@ public class StringUtils {
         return arrayToMessage(0, array);
     }
 
+    public static String secondsToString(int pTime) {
+        return String.format("%02d:%02d", pTime / 60, pTime % 60);
+    }
+
     public static String arrayToMessage(int start, String[] array) {
         String msg = "";
         for (int i = start; i < array.length; i++) {

@@ -25,7 +25,7 @@ import org.bukkit.entity.Player;
 
 public abstract class CustomCommand extends Command {
 
-    protected String[] usageMessages;
+    protected List<String> usageMessages;
 
     public CustomCommand(String name, String permission) {
         super(name);

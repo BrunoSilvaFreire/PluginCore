@@ -14,34 +14,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package me.ddevil.core.chat;
-
-import me.ddevil.core.CustomPlugin;
-import me.ddevil.core.CustomListener;
+package me.ddevil.core.utils;
 
 /**
  *
  * @author Selma
  */
-public class PluginChatManager extends BasicChatManager {
+public enum MessageColor {
 
-    private static PluginChatManager instance;
+    PRIMARY(1),
+    SECONDARY(2),
+    NEUTRAL(3),
+    ERROR(4);
 
-    public static PluginChatManager getInstance(CustomPlugin plugin) {
-        if (instance == null) {
-            instance = new PluginChatManager(plugin);
-        }
-        return instance;
+    private MessageColor(Integer id) {
+        this.id = id;
     }
-    private final CustomPlugin plugin;
 
-    public PluginChatManager(CustomPlugin plugin) {
-        this.plugin = plugin;
-    }
+    private final Integer id;
 
     @Override
-    public CustomListener setup() {
-        return this;
+    public String toString() {
+        return "$" + id;
     }
 
 }

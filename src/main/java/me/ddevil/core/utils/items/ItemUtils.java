@@ -14,12 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package me.ddevil.core.utils;
+package me.ddevil.core.utils.items;
 
 import me.ddevil.core.exceptions.ItemConversionException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import me.ddevil.core.CustomPlugin;
 import org.bukkit.Material;
@@ -76,7 +77,7 @@ public class ItemUtils {
             return createItem(
                     new ItemStack(m, 1, (short) 0, data),
                     itemName,
-                    itemLore.toArray(new String[itemLore.size()]));
+                    itemLore);
         } catch (Exception e) {
             throw new IllegalArgumentException("Configuration Section " + itemSection.getCurrentPath() + " is baddly formated!");
         }
@@ -93,18 +94,18 @@ public class ItemUtils {
         return is;
     }
 
-    public static ItemStack createItem(ItemStack material, String nome, String[] desc) {
+    public static ItemStack createItem(ItemStack material, String nome, Collection<String> desc) {
         ItemStack is = ItemUtils.createItem(material, nome);
         ItemMeta im = is.getItemMeta();
-        im.setLore(Arrays.asList(desc));
+        im.setLore(new ArrayList<String>(desc));
         is.setItemMeta(im);
         return is;
     }
 
-    public static ItemStack createItem(Material material, String nome, String[] desc) {
+    public static ItemStack createItem(Material material, String nome, Collection<String> desc) {
         ItemStack is = ItemUtils.createItem(material, nome);
         ItemMeta im = is.getItemMeta();
-        im.setLore(Arrays.asList(desc));
+        im.setLore(new ArrayList<String>(desc));
         is.setItemMeta(im);
         return is;
     }
@@ -165,7 +166,8 @@ public class ItemUtils {
         ItemStack itemCompra = new ItemStack(Material.EMERALD_BLOCK);
         ItemMeta IMCompra = itemCompra.getItemMeta();
         IMCompra.setDisplayName("§a§lComprar este " + itemVendido);
-        IMCompra.setLore(Arrays.asList(new String[]{"§7Compre este " + itemVendido + " por " + finalCusto}));
+        IMCompra.setLore(Arrays.asList(new String[]{"§7Compre este " + itemVendido + " por " + finalCusto
+        }));
         itemCompra.setItemMeta(IMCompra);
         return itemCompra;
     }

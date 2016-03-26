@@ -19,7 +19,7 @@ package me.ddevil.core.chat;
 import java.util.ArrayList;
 import java.util.List;
 import me.ddevil.core.CustomPlugin;
-import me.ddevil.core.Manager;
+import me.ddevil.core.CustomListener;
 import org.bukkit.ChatColor;
 
 /**
@@ -42,7 +42,7 @@ public abstract class BasicMessageManager implements MessageManager {
     public static String warningColor;
 
     @Override
-    public Manager setup() {
+    public CustomListener setup() {
         //Colors
         primaryColor
                 = CustomPlugin.instance.

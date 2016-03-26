@@ -3,10 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package me.ddevil.core.utils.inventory;
+package me.ddevil.core.utils.inventory.objects;
 
 import java.util.HashMap;
 import java.util.Map;
+import me.ddevil.core.utils.inventory.InventoryUtils;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -14,7 +15,7 @@ import org.bukkit.inventory.ItemStack;
  *
  * @author Selma
  */
-public class InventoryObject {
+public class InventorySchematic {
 
     private final Map<Integer, ItemStack> referenceMap;
     private final int minx;
@@ -22,7 +23,7 @@ public class InventoryObject {
     private final int maxx;
     private final int maxy;
 
-    public InventoryObject(Inventory inv, int pos1, int pos2) {
+    public InventorySchematic(Inventory inv, int pos1, int pos2) {
         Map<Integer, ItemStack> presetMap = new HashMap();
         for (int i : InventoryUtils.getSquare(inv, pos1, pos2)) {
             if (inv.getItem(i) != null) {

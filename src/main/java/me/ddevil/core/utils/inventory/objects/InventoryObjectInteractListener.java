@@ -3,15 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package me.ddevil.core;
+package me.ddevil.core.utils.inventory.objects;
 
-import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
 
 /**
  *
  * @author Selma
  */
-public interface Manager extends Listener {
+public interface InventoryObjectInteractListener {
 
-    public Manager setup();
+    public void onInteract(InventoryClickEvent e);
 }

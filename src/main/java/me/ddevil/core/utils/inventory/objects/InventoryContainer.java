@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package me.ddevil.core.utils.inventory;
+package me.ddevil.core.utils.inventory.objects;
 
+import me.ddevil.core.utils.inventory.InventoryUtils;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 

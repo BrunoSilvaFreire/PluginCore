@@ -23,7 +23,7 @@ import org.bukkit.entity.Player;
 
 public abstract class SubCommand {
 
-    protected String[] usageMessages;
+    protected List<String> usageMessages;
     public final CustomCommand command;
     protected final String name;
     protected List<String> aliases;
@@ -39,7 +39,7 @@ public abstract class SubCommand {
         this.name = name;
     }
 
-    public String[] getUsageMessages() {
+    public List<String> getUsageMessages() {
         return usageMessages;
     }
 
