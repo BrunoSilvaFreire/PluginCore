@@ -6,16 +6,17 @@
 package me.ddevil.core.utils;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 /**
  *
  * @author Selma
  */
 public class FileUtils {
-
-    public static boolean moveFileToDirectory(File file, File folder) throws SecurityException {
-        return file.renameTo(
-                new File(folder.getAbsolutePath() + file.getName())
-        );
+    
+    public static void moveFileToDirectory(File file, File folder) throws SecurityException, IOException {
+        Files.move(file.toPath(), folder.toPath().resolve(file.getName()));
     }
 }

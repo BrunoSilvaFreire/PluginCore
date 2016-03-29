@@ -17,6 +17,7 @@
 package me.ddevil.core.chat;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import me.ddevil.core.CustomPlugin;
 import me.ddevil.core.CustomListener;
@@ -44,35 +45,42 @@ public abstract class BasicMessageManager implements MessageManager {
     @Override
     public CustomListener setup() {
         //Colors
-        primaryColor
-                = CustomPlugin.instance.
-                getMessagesConfig()
-                .getString("messages.primaryColor");
-        secondaryColor = CustomPlugin.instance.getMessagesConfig().getString("messages.secondaryColor");
-        neutralColor = CustomPlugin.instance.getMessagesConfig().getString("messages.neutralColor");
-        warningColor = CustomPlugin.instance.getMessagesConfig().getString("messages.warningColor");
+        CustomPlugin.instance.debug("Loading colors...", 3);
+        primaryColor = CustomPlugin.instance.getMessagesConfig().getString("colors.primaryColor");
+        secondaryColor = CustomPlugin.instance.getMessagesConfig().getString("colors.secondaryColor");
+        neutralColor = CustomPlugin.instance.getMessagesConfig().getString("colors.neutralColor");
+        warningColor = CustomPlugin.instance.getMessagesConfig().getString("colors.warningColor");
+        CustomPlugin.instance.debug("Colors loaded!", 3);
         CustomPlugin.instance.debug(new String[]{
             "Colors set to:",
             "Primary: " + primaryColor,
             "Secondary: " + secondaryColor,
             "Neutral: " + neutralColor,
-            "Warning: " + warningColor,
-            "Colors loaded!"});
+            "Warning: " + warningColor
+        }, 2);
         //Global Messages
+        CustomPlugin.instance.debug("Loading basic messages...", 3);
         messageSeparator = translateColors(CustomPlugin.instance.getMessagesConfig().getString("messages.messageSeparator"));
         pluginPrefix = translateColors(CustomPlugin.instance.getMessagesConfig().getString("messages.messagePrefix"));
         header = translateAll(CustomPlugin.instance.getMessagesConfig().getString("messages.header"));
+        CustomPlugin.instance.debug("Messages loaded!", 3);
+        CustomPlugin.instance.debug(new String[]{
+            "Basic messages:",
+            "messageSeparator: " + messageSeparator,
+            "pluginPrefix: " + pluginPrefix,
+            "header: " + header}, 2);
         postSetup();
         return this;
     }
 
     public abstract void postSetup();
 
-    private static boolean isValidNumber(char c) {
+    protected static boolean isValidColor(char c) {
         return c == '1' || c == '2' || c == '3' || c == '4';
     }
 
     public static String getColor(int i) {
+        CustomPlugin.instance.debug("Getting color for number " + i + "...");
         switch (i) {
             case 1:
                 return primaryColor;
@@ -88,17 +96,23 @@ public abstract class BasicMessageManager implements MessageManager {
     }
 
     @Override
-    public String translateColors(String trans) {
-        char[] b = trans.toCharArray();
+    public String translateColors(String input) {
+        CustomPlugin.instance.debug("Translating colors for message \"" + input + "\"");
+        char[] b = input.toCharArray();
+        //Iterate
         for (int i = 0; i < b.length - 1; i++) {
-            if (b[i] == '$' && isValidNumber(b[i + 1])) {
-                int a = Character.getNumericValue(b[i + 1]);
-                String s = getColor(a);
+            /* Check if current character is $ and if the next
+             character is a valid color
+             */
+            if (b[i] == '$' && isValidColor(b[i + 1])) {
+                CustomPlugin.instance.debug("Character " + b[i] + " and " + b[i + 1] + " are replacable!");
+                String s = getColor(Character.getNumericValue(b[i + 1]));
                 if (s != null) {
                     b[i] = ChatColor.COLOR_CHAR;
                     b[i + 1] = s.charAt(0);
+                    CustomPlugin.instance.debug("Current status: " + Arrays.toString(b));
                 } else {
-                    CustomPlugin.instance.debug("Message \"" + trans + "\" is badly color coded! Remeber to only use $1 to $4 !");
+                    CustomPlugin.instance.debug("Could not find color for " + b[i] + b[i + 1] + "@ " + input + "! Are you sure you configured everything correctly?", 4);
                 }
             }
         }
@@ -107,7 +121,7 @@ public abstract class BasicMessageManager implements MessageManager {
 
     @Override
     public String translateAll(String input) {
-        return translateTags(translateColors(input));
+        return translateColors(translateTags(input));
     }
 
     @Override
@@ -130,7 +144,6 @@ public abstract class BasicMessageManager implements MessageManager {
     }
 
     @Override
-
     public List<String> translateAll(Iterable<String> input) {
         ArrayList<String> results = new ArrayList();
         for (String input1 : input) {

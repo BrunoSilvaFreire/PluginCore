@@ -165,30 +165,104 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
         return YamlConfiguration.loadConfiguration(config);
     }
 
+    public void broadcastDebug(String msg) {
+        Bukkit.broadcastMessage("§4§l" + getPluginName() + "-Debug §6§l> §7" + msg);
+    }
+
+    /**
+     * Prints a line on the console<br>
+     * <b>Debug priority list</b>
+     * <pre>
+     * 0 = All (by myseeeeeeelf, together weeeeeee)
+     * 1 = Secondary updates (Things that happen in a while with some relevance)
+     * 2 = Priority updates (Things that eventually happen and have more relevance)
+     * 3 = Loading/Unloading (Loads, Unloads, Reloads, Configs, etc)
+     * 4 = Ultra mega power blaster master requires messages </pre>
+     */
     public void debug() {
         debug("");
     }
 
+    /**
+     * Attempts to debug the given message with 0 priority<br>
+     * <b>Debug priority list</b>
+     * <pre>
+     * 0 = All (by myseeeeeeelf, together weeeeeee)
+     * 1 = Secondary updates (Things that happen in a while with some relevance)
+     * 2 = Priority updates (Things that eventually happen and have more relevance)
+     * 3 = Loading/Unloading (Loads, Unloads, Reloads, Configs, etc)
+     * 4 = Ultra mega power blaster master requires messages </pre>
+     *
+     * @param msg The message to be debuged
+     */
     public void debug(String[] msg) {
         for (String m : msg) {
             debug(m);
         }
     }
 
+    /**
+     * Attempts to debug the given messages with the given priority<br>
+     * <b>Debug priority list</b>
+     * <pre>
+     * 0 = All (by myseeeeeeelf, together weeeeeee)
+     * 1 = Secondary updates (Things that happen in a while with some relevance)
+     * 2 = Priority updates (Things that eventually happen and have more relevance)
+     * 3 = Loading/Unloading (Loads, Unloads, Reloads, Configs, etc)
+     * 4 = Ultra mega power blaster master requires messages </pre>
+     *
+     * @param msg The message to be debuged
+     * @param priority The message's priority
+     *
+     */
+    public void debug(String[] msg, int priority) {
+        for (String m : msg) {
+            debug(m, priority);
+        }
+    }
+
+    /**
+     * Attempts to debug the given message with 0 priority<br>
+     * <b>Debug priority list</b>
+     * <pre>
+     * 0 = All (by myseeeeeeelf, together weeeeeee)
+     * 1 = Secondary updates (Things that happen in a while with some relevance)
+     * 2 = Priority updates (Things that eventually happen and have more relevance)
+     * 3 = Loading/Unloading (Loads, Unloads, Reloads, Configs, etc)
+     * 4 = Ultra mega power blaster master requires messages </pre>
+     *
+     * @param msg The message to be debuged
+     */
     public void debug(String msg) {
         debug(msg, 0);
     }
 
-    public void broadcastDebug(String msg) {
-        Bukkit.broadcastMessage("§4§lDebug §6§l> §7" + msg);
-    }
-
+    /**
+     * Attempts to debug the given message with the given priority<br>
+     * <b>Debug priority list</b>
+     * <pre>
+     * 0 = All (by myseeeeeeelf, together weeeeeee)
+     * 1 = Secondary updates (Things that happen in a while with some relevance)
+     * 2 = Priority updates (Things that eventually happen and have more relevance)
+     * 3 = Loading/Unloading (Loads, Unloads, Reloads, Configs, etc)
+     * 4 = Ultra mega power blaster master requires messages </pre>
+     *
+     *
+     * @param msg The message to be debuged
+     * @param priority The message's priority
+     */
     public void debug(String msg, int priority) {
         if (priority >= minimumDebugPriotity) {
             getLogger().info(msg);
         }
     }
 
+    /**
+     * Forces the debugging of the given messages if force is true<br>
+     *
+     * @param msg The message to be debuged
+     * @param force Whether to force the display of the messages
+     */
     public void debug(String msg, boolean force) {
         if (force) {
             getLogger().info(msg);
@@ -199,6 +273,8 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
 
     public void printException(String msg, Throwable t) {
         debug(msg, true);
+        debug("Reason: ", true);
+        debug(t.getMessage(), true);
         debug("--== Error ==--", true);
         t.printStackTrace();
         debug("--== Error ==--", true);
