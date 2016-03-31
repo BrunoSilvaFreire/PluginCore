@@ -5,9 +5,8 @@
  */
 package me.ddevil.core.utils.inventory;
 
-import me.ddevil.core.utils.inventory.objects.InventoryObject;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Map;
+import me.ddevil.core.utils.inventory.objects.interfaces.InventoryObject;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
@@ -15,27 +14,13 @@ import org.bukkit.inventory.Inventory;
  *
  * @author Selma
  */
-public class InventoryMenu {
+public interface InventoryMenu {
 
-    private final HashMap<Integer, InventoryObject> objects = new HashMap();
-    private final Inventory bukkitInventory;
+    public void open(Player p);
 
-    public InventoryMenu(Inventory bukkitInventory) {
-        this.bukkitInventory = bukkitInventory;
-    }
+    public Inventory getBukkitInventory();
 
-    public InventoryMenu(String name, int totalLanes) {
-        this.bukkitInventory = InventoryUtils.createInventory(name, totalLanes);
-    }
+    public Map<Integer, InventoryObject> getMenuMap();
 
-    public void addObject(InventoryObject o) {
-    }
-
-    public Inventory getBukkitInventory() {
-        return bukkitInventory;
-    }
-
-    public void open(Player p) {
-        p.openInventory(bukkitInventory);
-    }
+    public void update();
 }

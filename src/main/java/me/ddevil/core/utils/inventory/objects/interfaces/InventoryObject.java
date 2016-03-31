@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package me.ddevil.core.utils.inventory.objects;
+package me.ddevil.core.utils.inventory.objects.interfaces;
 
 import me.ddevil.core.CustomListener;
-import me.ddevil.core.utils.inventory.InventoryMenu;
+import me.ddevil.core.utils.inventory.BasicInventoryMenu;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -16,7 +16,7 @@ import org.bukkit.inventory.ItemStack;
  */
 public interface InventoryObject {
 
-    public InventoryMenu getMenu();
+    public BasicInventoryMenu getMenu();
 
     public ItemStack getItemStack();
 

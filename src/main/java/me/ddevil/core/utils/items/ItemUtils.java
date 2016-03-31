@@ -255,6 +255,13 @@ public class ItemUtils {
         return false;
     }
 
+    public static ItemStack clearLore(ItemStack i) {
+        ItemMeta itemMeta = i.getItemMeta();
+        itemMeta.setLore(null);
+        i.setItemMeta(itemMeta);
+        return i;
+    }
+
     public static ItemStack addToLore(ItemStack i, List<String> strings) {
         List<String> lore = getLore(i);
         for (String toAdd : strings) {

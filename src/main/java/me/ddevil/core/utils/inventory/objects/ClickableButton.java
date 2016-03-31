@@ -5,7 +5,7 @@
  */
 package me.ddevil.core.utils.inventory.objects;
 
-import me.ddevil.core.utils.inventory.InventoryMenu;
+import me.ddevil.core.utils.inventory.objects.interfaces.InventoryObjectInteractListener;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -14,8 +14,8 @@ import org.bukkit.inventory.ItemStack;
  */
 public class ClickableButton extends BasicInventoryObject {
 
-    public ClickableButton(ItemStack itemStack, InventoryMenu menu, InventoryObjectInteractListener interactListener) {
-        super(itemStack, menu, interactListener);
+    public ClickableButton(ItemStack itemStack, InventoryObjectInteractListener interactListener) {
+        super(itemStack, interactListener);
     }
 
 }

@@ -22,6 +22,7 @@ import java.util.List;
 import me.ddevil.core.CustomPlugin;
 import me.ddevil.core.CustomListener;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
 
 /**
  * REMEMBER TO INITIALIZE THE VARIABLES IN THIS!
@@ -46,10 +47,31 @@ public abstract class BasicMessageManager implements MessageManager {
     public CustomListener setup() {
         //Colors
         CustomPlugin.instance.debug("Loading colors...", 3);
-        primaryColor = CustomPlugin.instance.getMessagesConfig().getString("colors.primaryColor");
-        secondaryColor = CustomPlugin.instance.getMessagesConfig().getString("colors.secondaryColor");
-        neutralColor = CustomPlugin.instance.getMessagesConfig().getString("colors.neutralColor");
-        warningColor = CustomPlugin.instance.getMessagesConfig().getString("colors.warningColor");
+        FileConfiguration messagesConfig = CustomPlugin.instance.getMessagesConfig();
+        if (!messagesConfig.contains("colors.primaryColor")) {
+            messagesConfig.set("colors.primaryColor", CustomPlugin.defaultColorDesign.getPrimaryColor());
+            primaryColor = String.valueOf(CustomPlugin.defaultColorDesign.getPrimaryColor());
+        } else {
+            primaryColor = messagesConfig.getString("colors.primaryColor");
+        }
+        if (!messagesConfig.contains("colors.secondaryColor")) {
+            messagesConfig.set("colors.secondaryColor", CustomPlugin.defaultColorDesign.getPrimaryColor());
+            secondaryColor = String.valueOf(CustomPlugin.defaultColorDesign.getPrimaryColor());
+        } else {
+            secondaryColor = messagesConfig.getString("colors.secondaryColor");
+        }
+        if (!messagesConfig.contains("colors.neutralColor")) {
+            messagesConfig.set("colors.neutralColor", CustomPlugin.defaultColorDesign.getPrimaryColor());
+            neutralColor = String.valueOf(CustomPlugin.defaultColorDesign.getPrimaryColor());
+        } else {
+            neutralColor = messagesConfig.getString("colors.neutralColor");
+        }
+        if (!messagesConfig.contains("colors.warningColor")) {
+            messagesConfig.set("colors.warningColor", CustomPlugin.defaultColorDesign.getPrimaryColor());
+            warningColor = String.valueOf(CustomPlugin.defaultColorDesign.getPrimaryColor());
+        } else {
+            warningColor = messagesConfig.getString("colors.warningColor");
+        }
         CustomPlugin.instance.debug("Colors loaded!", 3);
         CustomPlugin.instance.debug(new String[]{
             "Colors set to:",
@@ -60,9 +82,9 @@ public abstract class BasicMessageManager implements MessageManager {
         }, 2);
         //Global Messages
         CustomPlugin.instance.debug("Loading basic messages...", 3);
-        messageSeparator = translateColors(CustomPlugin.instance.getMessagesConfig().getString("messages.messageSeparator"));
-        pluginPrefix = translateColors(CustomPlugin.instance.getMessagesConfig().getString("messages.messagePrefix"));
-        header = translateAll(CustomPlugin.instance.getMessagesConfig().getString("messages.header"));
+        messageSeparator = translateColors(messagesConfig.getString("messages.messageSeparator"));
+        pluginPrefix = translateColors(messagesConfig.getString("messages.messagePrefix"));
+        header = translateAll(messagesConfig.getString("messages.header"));
         CustomPlugin.instance.debug("Messages loaded!", 3);
         CustomPlugin.instance.debug(new String[]{
             "Basic messages:",

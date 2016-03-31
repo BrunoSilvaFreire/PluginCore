@@ -20,6 +20,7 @@ import me.ddevil.core.chat.MessageManager;
 import java.io.File;
 import java.lang.reflect.Field;
 import me.ddevil.core.chat.ChatManager;
+import me.ddevil.core.chat.ColorDesign;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
@@ -38,14 +39,11 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
     protected static CommandMap commandMap;
     public static ChatManager chatManager;
     public static MessageManager messageManager;
+    public static ColorDesign defaultColorDesign;
     public int minimumDebugPriotity = 0;
     //Files
     public static File pluginFolder;
     public static File pluginConfigFile;
-
-    public abstract ChatManager getPluginChatManager();
-
-    public abstract MessageManager getPluginMessageManager();
 
     public abstract String getPluginName();
 
@@ -106,9 +104,6 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
         } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
             Bukkit.getPluginManager().disablePlugin(this);
         }
-        CustomPlugin.chatManager = getPluginChatManager();
-        CustomPlugin.messageManager = getPluginMessageManager();
-
     }
 
     public static void registerCommand(Command cmd) {
@@ -140,7 +135,7 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
 
     public static void registerListener(Listener l) {
         Bukkit.getPluginManager().registerEvents(l, instance);
-        instance.debug("Listener " + l.getClass().getSimpleName() + " registered.", 2);
+        instance.debug("Listener " + l.getClass().getSimpleName() + "@" + l.hashCode() + " registered.", 2);
     }
 
     public static void unregisterListener(Listener l) {
@@ -180,7 +175,7 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
      * 4 = Ultra mega power blaster master requires messages </pre>
      */
     public void debug() {
-        debug("");
+        debug(" ");
     }
 
     /**

@@ -5,8 +5,9 @@
  */
 package me.ddevil.core.utils.inventory.objects;
 
-import me.ddevil.core.utils.inventory.InventoryMenu;
-import org.bukkit.inventory.Inventory;
+import me.ddevil.core.utils.inventory.objects.interfaces.InventoryObjectInteractListener;
+import me.ddevil.core.utils.inventory.objects.interfaces.InventoryObject;
+import me.ddevil.core.utils.inventory.BasicInventoryMenu;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -15,12 +16,11 @@ import org.bukkit.inventory.ItemStack;
  */
 public abstract class BasicInventoryObject implements InventoryObject {
 
-    protected final InventoryMenu menu;
+    protected BasicInventoryMenu menu;
     protected final ItemStack itemStack;
     protected InventoryObjectInteractListener interactListener;
 
-    public BasicInventoryObject(ItemStack itemStack, InventoryMenu menu) {
-        this.menu = menu;
+    public BasicInventoryObject(ItemStack itemStack) {
         this.itemStack = itemStack;
         interactListener = null;
     }
@@ -29,8 +29,7 @@ public abstract class BasicInventoryObject implements InventoryObject {
         return interactListener;
     }
 
-    public BasicInventoryObject(ItemStack itemStack, InventoryMenu menu, InventoryObjectInteractListener interactListener) {
-        this.menu = menu;
+    public BasicInventoryObject(ItemStack itemStack, InventoryObjectInteractListener interactListener) {
         this.itemStack = itemStack;
         this.interactListener = interactListener;
     }
@@ -41,7 +40,7 @@ public abstract class BasicInventoryObject implements InventoryObject {
     }
 
     @Override
-    public InventoryMenu getMenu() {
+    public BasicInventoryMenu getMenu() {
         return menu;
     }
 

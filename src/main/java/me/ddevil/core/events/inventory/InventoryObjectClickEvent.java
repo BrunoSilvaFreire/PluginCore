@@ -6,8 +6,8 @@
 package me.ddevil.core.events.inventory;
 
 import me.ddevil.core.events.CustomEvent;
-import me.ddevil.core.utils.inventory.InventoryMenu;
-import me.ddevil.core.utils.inventory.objects.InventoryObject;
+import me.ddevil.core.utils.inventory.BasicInventoryMenu;
+import me.ddevil.core.utils.inventory.objects.interfaces.InventoryObject;
 import org.bukkit.entity.Player;
 
 /**
@@ -17,7 +17,7 @@ import org.bukkit.entity.Player;
 public class InventoryObjectClickEvent extends CustomEvent {
 
     private final InventoryObject object;
-    private final InventoryMenu menu;
+    private final BasicInventoryMenu menu;
     private final Player player;
 
     public InventoryObjectClickEvent(InventoryObject object, Player clicker) {
@@ -26,7 +26,7 @@ public class InventoryObjectClickEvent extends CustomEvent {
         this.player = clicker;
     }
 
-    public InventoryMenu getMenu() {
+    public BasicInventoryMenu getMenu() {
         return menu;
     }
 

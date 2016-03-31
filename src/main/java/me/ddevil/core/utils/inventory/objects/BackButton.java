@@ -5,8 +5,9 @@
  */
 package me.ddevil.core.utils.inventory.objects;
 
+import me.ddevil.core.utils.inventory.objects.interfaces.InventoryObjectInteractListener;
 import me.ddevil.core.events.inventory.InventoryObjectClickEvent;
-import me.ddevil.core.utils.inventory.InventoryMenu;
+import me.ddevil.core.utils.inventory.BasicInventoryMenu;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -15,14 +16,14 @@ import org.bukkit.inventory.ItemStack;
  */
 public class BackButton extends BasicInventoryObject implements InventoryObjectInteractListener {
 
-    private final InventoryMenu returningMenu;
+    private final BasicInventoryMenu returningMenu;
 
-    public BackButton(InventoryMenu ownerMenu, InventoryMenu returnMenu, ItemStack item) {
-        super(item, ownerMenu);
+    public BackButton(BasicInventoryMenu returnMenu, ItemStack item) {
+        super(item);
         this.returningMenu = returnMenu;
     }
 
-    public InventoryMenu getReturningMenu() {
+    public BasicInventoryMenu getReturningMenu() {
         return returningMenu;
     }
 
