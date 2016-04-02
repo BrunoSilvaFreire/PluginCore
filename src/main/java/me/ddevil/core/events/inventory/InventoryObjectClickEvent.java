@@ -7,7 +7,7 @@ package me.ddevil.core.events.inventory;
 
 import me.ddevil.core.events.CustomEvent;
 import me.ddevil.core.utils.inventory.BasicInventoryMenu;
-import me.ddevil.core.utils.inventory.objects.interfaces.InventoryObject;
+import me.ddevil.core.utils.inventory.objects.InventoryObject;
 import org.bukkit.entity.Player;
 
 /**

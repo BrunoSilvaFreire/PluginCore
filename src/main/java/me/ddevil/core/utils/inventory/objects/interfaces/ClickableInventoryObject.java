@@ -11,5 +11,5 @@ package me.ddevil.core.utils.inventory.objects.interfaces;
  */
 public interface ClickableInventoryObject {
 
-    public InventoryObjectInteractListener getInteractListener();
+    public InventoryObjectClickListener getInteractListener();
 }

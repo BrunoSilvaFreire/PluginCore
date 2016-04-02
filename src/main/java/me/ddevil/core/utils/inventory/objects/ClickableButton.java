@@ -5,17 +5,26 @@
  */
 package me.ddevil.core.utils.inventory.objects;
 
-import me.ddevil.core.utils.inventory.objects.interfaces.InventoryObjectInteractListener;
+import me.ddevil.core.utils.inventory.objects.interfaces.ClickableInventoryObject;
+import me.ddevil.core.utils.inventory.objects.interfaces.InventoryObjectClickListener;
 import org.bukkit.inventory.ItemStack;
 
 /**
  *
  * @author Selma
  */
-public class ClickableButton extends BasicInventoryObject {
+public class ClickableButton extends BasicInventoryObject implements ClickableInventoryObject {
 
-    public ClickableButton(ItemStack itemStack, InventoryObjectInteractListener interactListener) {
-        super(itemStack, interactListener);
+    private final InventoryObjectClickListener interactListener;
+
+    public ClickableButton(ItemStack itemStack, InventoryObjectClickListener interactListener) {
+        super(itemStack);
+        this.interactListener = interactListener;
+    }
+
+    @Override
+    public InventoryObjectClickListener getInteractListener() {
+        return interactListener;
     }
 
 }

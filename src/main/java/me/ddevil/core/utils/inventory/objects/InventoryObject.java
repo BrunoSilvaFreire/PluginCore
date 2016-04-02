@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package me.ddevil.core.utils.inventory.objects.interfaces;
+package me.ddevil.core.utils.inventory.objects;
 
 import me.ddevil.core.CustomListener;
 import me.ddevil.core.utils.inventory.BasicInventoryMenu;

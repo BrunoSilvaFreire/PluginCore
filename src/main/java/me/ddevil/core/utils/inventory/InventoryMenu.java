@@ -6,7 +6,7 @@
 package me.ddevil.core.utils.inventory;
 
 import java.util.Map;
-import me.ddevil.core.utils.inventory.objects.interfaces.InventoryObject;
+import me.ddevil.core.utils.inventory.objects.InventoryObject;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 

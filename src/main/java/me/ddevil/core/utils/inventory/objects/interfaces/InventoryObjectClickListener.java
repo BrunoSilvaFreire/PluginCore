@@ -11,7 +11,7 @@ import me.ddevil.core.events.inventory.InventoryObjectClickEvent;
  *
  * @author Selma
  */
-public interface InventoryObjectInteractListener {
+public interface InventoryObjectClickListener {
 
     public void onInteract(InventoryObjectClickEvent e);
 }
