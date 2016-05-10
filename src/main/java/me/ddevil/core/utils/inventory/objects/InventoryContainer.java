@@ -5,58 +5,32 @@
  */
 package me.ddevil.core.utils.inventory.objects;
 
-import me.ddevil.core.utils.inventory.InventoryUtils;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import me.ddevil.core.utils.inventory.objects.interfaces.ClickableInventoryObject;
 
 /**
  *
- * @author Selma
+ * @author HP
  */
-public class InventoryContainer {
-    
-    protected final int size;
-    protected final Integer[] map;
-    protected final Inventory inventory;
-    
-    public InventoryContainer(Inventory inv, int pos1, int pos2) {
-        int containerSize = 0;
-        this.map = InventoryUtils.getSquare(inv, pos1, pos2);
-        for (int pos : map) {
-            if (inv.getItem(pos) != null) {
-                containerSize++;
-            }
-        }
-        this.size = containerSize;
-        this.inventory = inv;
-    }
-    
-    public int getSize() {
-        return size;
-    }
-    
-    public void setItem(int slot, ItemStack item) {
-        if (map.length > slot) {
-            inventory.setItem(map[slot], item);
-        }
-    }
-    
-    public void clear() {
-        for (int i : map) {
-            inventory.setItem(i, null);
-        }
-    }
-    
-    public boolean canPlaceIn(int slot) {
-        return map.length > slot;
-    }
-    
-    public boolean contains(int slot) {
-        for (int m : map) {
-            if (m == slot) {
-                return true;
-            }
-        }
-        return false;
-    }
+public interface InventoryContainer extends InventoryObject, ClickableInventoryObject {
+
+    public void setItem(int slot, ItemStack item);
+
+    public void addItem(ItemStack item);
+
+    public void setObject(int slot, InventoryObject item);
+
+    public void addObject(InventoryObject item);
+
+    public boolean containsSlot(int slot);
+
+    public boolean canPlaceIn(int slot);
+
+    public void removeItem(int slot);
+
+    public void clear();
+
+    public void update();
+
+    public int getSize();
 }

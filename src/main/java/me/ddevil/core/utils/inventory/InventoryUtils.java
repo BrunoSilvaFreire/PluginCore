@@ -9,14 +9,51 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import me.ddevil.core.utils.items.ItemUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 /**
  *
  * @author Selma
  */
 public class InventoryUtils {
+
+    public static void clearInventory(Player p) {
+        PlayerInventory inventory = p.getInventory();
+        inventory.clear();
+        inventory.setArmorContents(null);
+    }
+
+    public static void dropPlayer(Player p) {
+        clearInventory(p);
+        PlayerInventory inventory = p.getInventory();
+        Location location = p.getLocation();
+        dropInventory(inventory, location);
+        World world = location.getWorld();
+        for (ItemStack itemStack : inventory.getArmorContents()) {
+            if (itemStack != null) {
+                if (itemStack.getType() != Material.AIR) {
+                    world.dropItemNaturally(location, itemStack);
+                }
+            }
+        }
+    }
+
+    public static void dropInventory(Inventory i, Location l) {
+        World world = l.getWorld();
+        for (ItemStack itemStack : i) {
+            if (itemStack != null) {
+                if (itemStack.getType() != Material.AIR) {
+                    world.dropItem(l, itemStack);
+                }
+            }
+        }
+    }
 
     public static boolean wasClickedInLane(Inventory i, int clickedSlot, int lane) {
         return Arrays.asList(getLane(i, lane)).contains(clickedSlot);
@@ -47,10 +84,8 @@ public class InventoryUtils {
         for (int i : getSquare(inv, pos1, pos2)) {
             if (replace) {
                 inv.setItem(i, item);
-            } else {
-                if (inv.getItem(i) != null) {
-                    inv.setItem(i, item);
-                }
+            } else if (inv.getItem(i) != null) {
+                inv.setItem(i, item);
             }
         }
     }

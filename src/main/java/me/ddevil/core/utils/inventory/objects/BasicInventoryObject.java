@@ -5,9 +5,9 @@
  */
 package me.ddevil.core.utils.inventory.objects;
 
-import me.ddevil.core.utils.inventory.objects.interfaces.InventoryObjectClickListener;
 import me.ddevil.core.utils.inventory.BasicInventoryMenu;
 import org.bukkit.inventory.ItemStack;
+import me.ddevil.core.utils.inventory.InventoryMenu;
 
 /**
  *
@@ -15,26 +15,35 @@ import org.bukkit.inventory.ItemStack;
  */
 public abstract class BasicInventoryObject implements InventoryObject {
 
-    protected BasicInventoryMenu menu;
-    protected final ItemStack itemStack;
+    protected final InventoryMenu menu;
 
-    public BasicInventoryObject(ItemStack itemStack) {
-        this.itemStack = itemStack;
+    public BasicInventoryObject(InventoryMenu menu) {
+        this.menu = menu;
     }
 
     @Override
-    public ItemStack getItemStack() {
-        return itemStack;
-    }
-
-    @Override
-    public BasicInventoryMenu getMenu() {
+    public InventoryMenu getMenu() {
         return menu;
     }
 
     @Override
-    public boolean hasInteraction() {
-        return this instanceof ClickableButton;
+    public boolean hasMultiSlots() {
+        return false;
+    }
+
+    @Override
+    public Integer[] getMultiSlots() {
+        return null;
+    }
+
+    @Override
+    public boolean hasItemStack() {
+        return false;
+    }
+
+    @Override
+    public ItemStack getIcon() {
+        return null;
     }
 
 }

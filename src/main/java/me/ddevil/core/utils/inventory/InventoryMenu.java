@@ -6,21 +6,35 @@
 package me.ddevil.core.utils.inventory;
 
 import java.util.Map;
-import me.ddevil.core.utils.inventory.objects.InventoryObject;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
+import me.ddevil.core.utils.inventory.objects.InventoryObject;
 
 /**
  *
  * @author Selma
  */
-public interface InventoryMenu {
+public interface InventoryMenu extends Listener {
 
     public void open(Player p);
+
+    public void disable();
+
+    public InventoryMenu initialSetup();
 
     public Inventory getBukkitInventory();
 
     public Map<Integer, InventoryObject> getMenuMap();
 
+    public void registerInventoryObject(InventoryObject o, int i) throws IllegalArgumentException;
+
+    public void setItem(ItemStack itemStack, int slot);
+
     public void update();
+
+    public boolean hasObjectInSlot(int slot);
+
+    public InventoryObject getInventoryObject(int slot);
 }
