@@ -24,6 +24,9 @@ import java.util.ArrayList;
  */
 public abstract class CustomThread extends Thread {
 
+    private long startTime;
+    private long endTime;
+    private long totalTime;
     private final ArrayList<ThreadFinishListener> listeners = new ArrayList<>();
 
     public final void addListener(final ThreadFinishListener listener) {
@@ -42,11 +45,31 @@ public abstract class CustomThread extends Thread {
 
     @Override
     public final void run() {
+        startTime = System.currentTimeMillis();
         try {
             doRun();
+            endTime = System.currentTimeMillis();
+            totalTime = endTime - startTime;
         } finally {
             notifyListeners();
         }
+        listeners.clear();
+    }
+
+    public long getTotalTime() {
+        return totalTime;
+    }
+
+    public long getEndTime() {
+        return endTime;
+    }
+
+    public float getTotalTimeSeconds() {
+        return (float) getTotalTime() / 1000;
+    }
+
+    public long getStartTime() {
+        return startTime;
     }
 
     public abstract void doRun();

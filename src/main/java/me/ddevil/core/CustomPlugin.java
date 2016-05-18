@@ -22,6 +22,7 @@ import java.lang.reflect.Field;
 import me.ddevil.core.chat.ChatManager;
 import me.ddevil.core.chat.ColorDesign;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -44,6 +45,7 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
     //Files
     public static File pluginFolder;
     public static File pluginConfigFile;
+    private boolean allowBroadcastdebug;
 
     public abstract String getPluginName();
 
@@ -161,7 +163,19 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
     }
 
     public void broadcastDebug(String msg) {
-        Bukkit.broadcastMessage("§4§l" + getPluginName() + "-Debug §6§l> §7" + msg);
+        broadcastDebug(msg, minimumDebugPriotity);
+    }
+
+    public void broadcastDebug(String msg, int priority) {
+        if (allowBroadcastdebug) {
+            if (priority >= minimumDebugPriotity) {
+                StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+                StackTraceElement e = stackTraceElements[3];
+                Bukkit.broadcastMessage("§c§l" + getPluginName() + "§c§lDebug§7-§e" + e.getClassName() + "@" + e.getMethodName() + "§o(" + e.getLineNumber() + ") §6§l> §7" + msg);
+            }
+        } else {
+            debug(ChatColor.stripColor(msg), priority);
+        }
     }
 
     /**

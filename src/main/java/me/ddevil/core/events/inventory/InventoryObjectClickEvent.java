@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import me.ddevil.core.utils.inventory.InventoryMenu;
 import me.ddevil.core.utils.inventory.objects.InventoryObject;
 import org.bukkit.block.Block;
+import org.bukkit.inventory.ItemStack;
 
 /**
  *
@@ -23,6 +24,7 @@ public class InventoryObjectClickEvent extends CustomEvent {
     private final int clickedSlot;
     private final InteractionType clickType;
     private final Block placedBlock;
+    private final ItemStack itemInHand;
 
     public enum InteractionType {
 
@@ -32,13 +34,14 @@ public class InventoryObjectClickEvent extends CustomEvent {
         INTERACT_CLICK_LEFT;
     }
 
-    public InventoryObjectClickEvent(InventoryObject object, int slot, Player clicker, InteractionType click, Block block) {
+    public InventoryObjectClickEvent(InventoryObject object, int slot, Player clicker, InteractionType click, Block block, ItemStack itemInHand) {
         this.object = object;
         this.menu = object.getMenu();
         this.player = clicker;
         this.clickedSlot = slot;
         this.clickType = click;
         this.placedBlock = block;
+        this.itemInHand = itemInHand;
     }
 
     public InventoryMenu getMenu() {
@@ -63,6 +66,10 @@ public class InventoryObjectClickEvent extends CustomEvent {
 
     public Block getPlacedBlock() {
         return placedBlock;
+    }
+
+    public ItemStack getItemInHand() {
+        return itemInHand;
     }
 
 }

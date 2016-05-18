@@ -11,7 +11,7 @@ import org.bukkit.event.Listener;
  *
  * @author Selma
  */
-public interface CustomListener extends Listener {
+public interface Manager extends Listener {
 
-    public CustomListener setup();
+    public Manager setup();
 }

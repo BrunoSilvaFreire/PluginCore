@@ -17,14 +17,14 @@
 package me.ddevil.core.chat;
 
 import java.util.List;
-import me.ddevil.core.CustomListener;
+import me.ddevil.core.Manager;
 import org.bukkit.entity.Player;
 
 /**
  *
  * @author Selma
  */
-public interface ChatManager extends CustomListener {
+public interface ChatManager extends Manager {
 
     public void sendMessage(Player p, String string);
 

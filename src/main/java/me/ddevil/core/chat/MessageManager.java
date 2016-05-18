@@ -17,13 +17,13 @@
 package me.ddevil.core.chat;
 
 import java.util.List;
-import me.ddevil.core.CustomListener;
+import me.ddevil.core.Manager;
 
 /**
  *
  * @author Selma
  */
-public interface MessageManager extends CustomListener {
+public interface MessageManager extends Manager {
 
     /**
      * Gets the colored and beautiful plugin name Ex: §a§lMine§e§lMe

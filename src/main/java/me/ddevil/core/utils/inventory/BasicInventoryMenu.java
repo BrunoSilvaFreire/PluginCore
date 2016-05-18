@@ -88,7 +88,7 @@ public abstract class BasicInventoryMenu implements InventoryMenu {
 
     @EventHandler
     public void onClick(InventoryClickEvent e) {
-        Inventory clickedInventory = e.getInventory();
+        Inventory clickedInventory = e.getClickedInventory();
         if (clickedInventory != null) {
             if (mainInventory != null) {
                 if (clickedInventory.equals(mainInventory)) {
@@ -103,7 +103,7 @@ public abstract class BasicInventoryMenu implements InventoryMenu {
                             } else {
                                 type = InventoryObjectClickEvent.InteractionType.INVENTORY_CLICK_RIGHT;
                             }
-                            new InventoryObjectClickEvent(objects.get(slot), slot, (Player) e.getWhoClicked(), type, null).call();
+                            new InventoryObjectClickEvent(objects.get(slot), slot, (Player) e.getWhoClicked(), type, null, e.getCursor()).call();
                         }
                     }
                 }

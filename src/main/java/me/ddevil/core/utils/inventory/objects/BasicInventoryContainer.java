@@ -5,7 +5,11 @@
  */
 package me.ddevil.core.utils.inventory.objects;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import me.ddevil.core.CustomPlugin;
 import me.ddevil.core.events.inventory.InventoryObjectClickEvent;
 import me.ddevil.core.utils.inventory.InventoryUtils;
 import me.ddevil.core.utils.inventory.objects.interfaces.InventoryObjectClickListener;
@@ -13,6 +17,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import me.ddevil.core.utils.inventory.InventoryMenu;
 import me.ddevil.core.utils.inventory.objects.interfaces.ClickableInventoryObject;
+import me.ddevil.core.utils.items.ItemUtils;
 
 /**
  *
@@ -37,7 +42,23 @@ public class BasicInventoryContainer implements InventoryContainer {
         }
     }
 
-    public class ClickHandler implements InventoryObjectClickListener {
+    public void clearAndFill(ItemStack item) {
+        clear();
+        fill(item);
+    }
+
+    public void fill(ItemStack item) {
+        for (Integer slot : map) {
+            CustomPlugin.instance.debug("Placing item in slot " + slot);
+            if (canPlaceIn(slot)) {
+                setItem(slot, item);
+            } else {
+                CustomPlugin.instance.debug("Could not place item " + ItemUtils.toString(item) + " in slot " + slot + " while filling");
+            }
+        }
+    }
+
+    private class ContainerClickHandler implements InventoryObjectClickListener {
 
         @Override
         public void onInteract(InventoryObjectClickEvent e) {
@@ -57,7 +78,7 @@ public class BasicInventoryContainer implements InventoryContainer {
     protected final Integer[] map;
     protected final Inventory inventory;
     protected final InventoryMenu menu;
-    protected final HashMap<Integer, InventoryObject> inventoryObjects = new HashMap();
+    protected final Map<Integer, InventoryObject> inventoryObjects = new HashMap();
     private final InventoryObjectClickListener listener;
 
     public BasicInventoryContainer(InventoryMenu menu, int pos1, int pos2) {
@@ -71,7 +92,7 @@ public class BasicInventoryContainer implements InventoryContainer {
             }
         }
         this.size = containerSize;
-        this.listener = new ClickHandler();
+        this.listener = new ContainerClickHandler();
         this.height = size / 9;
         this.width = size % 9;
     }
@@ -114,7 +135,7 @@ public class BasicInventoryContainer implements InventoryContainer {
             inventory.setItem(slot, itemStack);
         }
         if (item.hasMultiSlots()) {
-            Integer[] slots = item.getMultiSlots();
+            List<Integer> slots = item.getMultiSlots();
             for (int i : slots) {
                 if (i != slot) {
                     inventoryObjects.put(i, item);
@@ -124,6 +145,7 @@ public class BasicInventoryContainer implements InventoryContainer {
                 }
             }
         }
+        CustomPlugin.instance.broadcastDebug(msg);
     }
 
     @Override
@@ -189,8 +211,8 @@ public class BasicInventoryContainer implements InventoryContainer {
     }
 
     @Override
-    public Integer[] getMultiSlots() {
-        return map;
+    public List<Integer> getMultiSlots() {
+        return Arrays.asList(map);
     }
 
     @Override
@@ -204,4 +226,10 @@ public class BasicInventoryContainer implements InventoryContainer {
             menu.getBukkitInventory().setItem(i, inventoryObjects.get(i).getIcon());
         }
     }
+
+    @Override
+    public Map<Integer, InventoryObject> getInventoryObjects() {
+        return inventoryObjects;
+    }
+
 }

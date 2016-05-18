@@ -17,7 +17,7 @@
 package me.ddevil.core.chat;
 
 import me.ddevil.core.CustomPlugin;
-import me.ddevil.core.CustomListener;
+import me.ddevil.core.Manager;
 
 /**
  *
@@ -40,7 +40,7 @@ public class PluginChatManager extends BasicChatManager {
     }
 
     @Override
-    public CustomListener setup() {
+    public Manager setup() {
         return this;
     }
 

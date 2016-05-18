@@ -5,6 +5,7 @@
  */
 package me.ddevil.core.utils.inventory.objects;
 
+import java.util.Map;
 import org.bukkit.inventory.ItemStack;
 import me.ddevil.core.utils.inventory.objects.interfaces.ClickableInventoryObject;
 
@@ -30,7 +31,7 @@ public interface InventoryContainer extends InventoryObject, ClickableInventoryO
 
     public void clear();
 
-    public void update();
+    public Map<Integer, InventoryObject> getInventoryObjects();
 
     public int getSize();
 }

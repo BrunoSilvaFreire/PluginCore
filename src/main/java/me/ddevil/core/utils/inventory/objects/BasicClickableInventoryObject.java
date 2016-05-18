@@ -14,12 +14,20 @@ import me.ddevil.core.utils.inventory.objects.interfaces.ClickableInventoryObjec
  *
  * @author Selma
  */
-public abstract class BasicClickableInventoryObject extends BasicInventoryItem implements ClickableInventoryObject {
+public class BasicClickableInventoryObject extends BasicInventoryItem implements ClickableInventoryObject {
 
-    private final InventoryObjectClickListener interactListener;
+    protected InventoryObjectClickListener interactListener;
 
     public BasicClickableInventoryObject(ItemStack itemStack, InventoryObjectClickListener interactListener, InventoryMenu menu) {
         super(menu, itemStack);
+        this.interactListener = interactListener;
+    }
+
+    public BasicClickableInventoryObject(ItemStack itemStack, InventoryMenu menu) {
+        super(menu, itemStack);
+    }
+
+    public void setInteractListener(InventoryObjectClickListener interactListener) {
         this.interactListener = interactListener;
     }
 

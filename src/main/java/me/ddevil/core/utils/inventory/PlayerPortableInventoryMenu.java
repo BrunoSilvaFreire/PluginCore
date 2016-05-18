@@ -49,13 +49,16 @@ public abstract class PlayerPortableInventoryMenu extends BasicInventoryMenu {
                         if (e.getClickedBlock() != null) {
                             finalBlock = e.getClickedBlock().getRelative(e.getBlockFace());
                         }
+                        PlayerInventory inv = player.getInventory();
                         new InventoryObjectClickEvent(
                                 getInventoryObject(slot),
                                 slot,
                                 player,
                                 it,
-                                finalBlock
-                        ).call();
+                                finalBlock,
+                                inv.getItem(inv.getHeldItemSlot())
+                        ).
+                                call();
                     }
                 }
             }

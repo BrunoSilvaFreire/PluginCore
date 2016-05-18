@@ -5,6 +5,7 @@
  */
 package me.ddevil.core.utils.inventory.objects;
 
+import java.util.List;
 import org.bukkit.inventory.ItemStack;
 import me.ddevil.core.utils.inventory.InventoryMenu;
 
@@ -18,10 +19,11 @@ public interface InventoryObject {
 
     public boolean hasMultiSlots();
 
-    public Integer[] getMultiSlots();
+    public List<Integer> getMultiSlots();
 
     public boolean hasItemStack();
 
     public ItemStack getIcon();
 
+    public void update();
 }

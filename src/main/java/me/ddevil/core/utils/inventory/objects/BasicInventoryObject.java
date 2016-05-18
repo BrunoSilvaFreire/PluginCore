@@ -5,6 +5,7 @@
  */
 package me.ddevil.core.utils.inventory.objects;
 
+import java.util.List;
 import me.ddevil.core.utils.inventory.BasicInventoryMenu;
 import org.bukkit.inventory.ItemStack;
 import me.ddevil.core.utils.inventory.InventoryMenu;
@@ -32,7 +33,7 @@ public abstract class BasicInventoryObject implements InventoryObject {
     }
 
     @Override
-    public Integer[] getMultiSlots() {
+    public List<Integer> getMultiSlots() {
         return null;
     }
 
@@ -44,6 +45,10 @@ public abstract class BasicInventoryObject implements InventoryObject {
     @Override
     public ItemStack getIcon() {
         return null;
+    }
+
+    @Override
+    public void update() {
     }
 
 }

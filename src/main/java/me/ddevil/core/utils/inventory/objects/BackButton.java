@@ -25,9 +25,7 @@ public class BackButton extends BasicClickableInventoryObject {
 
             @Override
             public void onInteract(InventoryObjectClickEvent e) {
-                if (e.getMenu() == returningMenu) {
-                    returningMenu.open(e.getPlayer());
-                }
+                returningMenu.open(e.getPlayer());
             }
         }, menu);
         this.returningMenu = returnMenu;
