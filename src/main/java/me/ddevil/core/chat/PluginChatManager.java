@@ -36,7 +36,7 @@ public class PluginChatManager extends BasicChatManager {
         p.sendMessage(
                 CustomPlugin.messageManager.getPluginPrefix()
                 + CustomPlugin.messageManager.getMessageSeparator()
-                + "§" + colors.getNeutralColor()
+                + "§" + colors.neutralColor
                 + CustomPlugin.messageManager.translateAll(string)
         );
     }

@@ -18,7 +18,10 @@ package me.ddevil.core;
 
 import me.ddevil.core.chat.MessageManager;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import me.ddevil.core.chat.ChatManager;
 import me.ddevil.core.chat.ColorDesign;
 import me.ddevil.core.chat.PluginChatManager;
@@ -53,18 +56,29 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
         return commandMap;
     }
 
+    public static void main(String[] args) {
+        try {
+            System.out.println("Oh noes, you are supposed to place this file in /{your server folder}/plugins");
+            Thread.sleep(5000);
+            System.out.println("I mean... come on man, are you even trying?");
+            System.in.read();
+        } catch (InterruptedException | IOException ex) {
+            Logger.getLogger(CustomPlugin.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     @Override
     public final void onEnable() {
         instance = this;
         pluginFolder = getDataFolder();
         if (!pluginFolder.exists()) {
-            debug("Plugin folder not found! Making one...", 3);
+            debug("Plugin folder not found! Making one...", DebugLevel.SHOULDNT_HAPPEN_BUT_WE_CAN_HANDLE_IT);
             pluginFolder.mkdir();
         }
         pluginConfigFile = new File(pluginFolder, "config.yml");
         if (!pluginConfigFile.exists()) {
             //Load from plugin
-            debug("Config file not found! Making one...", 3);
+            debug("Config file not found! Making one...", DebugLevel.SHOULDNT_HAPPEN_BUT_WE_CAN_HANDLE_IT);
             loadResource(pluginConfigFile, "config.yml");
         }
         pluginConfig = YamlConfiguration.loadConfiguration(pluginConfigFile);
@@ -76,21 +90,21 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
         } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
             Bukkit.getPluginManager().disablePlugin(this);
         }
-        //Initialize components
-        doSetup();
+        initializeComponents();
         //Check for default components
         if (colorDesign == null) {
             colorDesign = ColorDesign.DEFAULT_COLOR_DESIGN;
-            debug("Plugin didn't specify any Color Design, loading default one...", 2);
+            debug("Plugin didn't specify any Color Design, loading default one...", DebugLevel.SHOULDNT_HAPPEN_BUT_WE_CAN_HANDLE_IT);
         }
         if (chatManager == null) {
             chatManager = (ChatManager) new PluginChatManager().setup();
-            debug("Plugin didn't specify any Chat Manager, loading default one...", 2);
+            debug("Plugin didn't specify any Chat Manager, loading default one...", DebugLevel.SHOULDNT_HAPPEN_BUT_WE_CAN_HANDLE_IT);
         }
         if (messageManager == null) {
             messageManager = (MessageManager) new PluginMessageManager().setup();
-            debug("Plugin didn't specify any Message Manager, loading default one...", 2);
+            debug("Plugin didn't specify any Message Manager, loading default one...", DebugLevel.SHOULDNT_HAPPEN_BUT_WE_CAN_HANDLE_IT);
         }
+        doSetup();
     }
     //</editor-fold>
     //<editor-fold desc="Files/Configs variables" defaultstate="collapsed">
@@ -134,6 +148,8 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
 
     public abstract FileConfiguration getMessagesConfig();
 
+    protected abstract void initializeComponents();
+
     protected abstract void doSetup();
 
     protected abstract void doReload();
@@ -169,11 +185,25 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
 
     //</editor-fold>
     //<editor-fold desc="Debugging" defaultstate="collapsed">
-    public void broadcastDebug(String msg) {
-        broadcastDebug(msg, minimumDebugPriority);
+    /**
+     * How much of a fuck to give when something goes wrong, they should be self
+     * explanatory
+     */
+    public enum DebugLevel {
+
+        MEH,
+        NO_BIG_DEAL,
+        SHOULDNT_HAPPEN_BUT_WE_CAN_HANDLE_IT,
+        OKAY_SOME_REAL_SHIT_HAPPENED,
+        FUCK_MAN_SOUND_THE_ALARMS
     }
 
-    public void broadcastDebug(String msg, int priority) {
+    public void broadcastDebug(String msg) {
+        broadcastDebug(msg, DebugLevel.OKAY_SOME_REAL_SHIT_HAPPENED);
+    }
+
+    public void broadcastDebug(String msg, DebugLevel level) {
+        int priority = level.ordinal();
         if (allowBroadcastdebug) {
             if (priority >= minimumDebugPriority) {
                 StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
@@ -181,7 +211,7 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
                 Bukkit.broadcastMessage("§c§l" + getPluginName() + "§c§lDebug§7-§e" + e.getClassName() + "@" + e.getMethodName() + "§o(" + e.getLineNumber() + ") §6§l> §7" + msg);
             }
         } else {
-            debug(ChatColor.stripColor(msg), priority);
+            debug(ChatColor.stripColor(msg), level);
         }
     }
 
@@ -196,7 +226,7 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
      * 4 = Ultra mega power blaster master requires messages </pre>
      */
     public void debug() {
-        debug(" ");
+        debug(" ", DebugLevel.NO_BIG_DEAL);
     }
 
     /**
@@ -231,7 +261,7 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
      * @param priority The message's priority
      *
      */
-    public void debug(String[] msg, int priority) {
+    public void debug(String[] msg, DebugLevel priority) {
         for (String m : msg) {
             debug(m, priority);
         }
@@ -250,7 +280,7 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
      * @param msg The message to be debuged
      */
     public void debug(String msg) {
-        debug(msg, 0);
+        debug(msg, DebugLevel.NO_BIG_DEAL);
     }
 
     /**
@@ -265,9 +295,10 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
      *
      *
      * @param msg The message to be debuged
-     * @param priority The message's priority
+     * @param level The message's priority
      */
-    public void debug(String msg, int priority) {
+    public void debug(String msg, DebugLevel level) {
+        int priority = level.ordinal();
         if (priority >= minimumDebugPriority) {
             getLogger().info(msg);
         }
@@ -304,12 +335,12 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
         doReload();
         long end = System.currentTimeMillis();
         long time = end - start;
-        chatManager.sendMessage(p, "Reloaded! Took " + (time / 1000) + "seconds! " + colorDesign.getSecondaryColor() + "(" + time + "ms)");
+        chatManager.sendMessage(p, "Reloaded! Took " + (time / 1000) + "seconds! " + colorDesign.secondaryColor + "(" + time + "ms)");
     }
 
     public static void registerListener(Listener l) {
         Bukkit.getPluginManager().registerEvents(l, instance);
-        instance.debug("Listener " + l.getClass().getSimpleName() + "@" + l.hashCode() + " registered.", 2);
+        instance.debug("Listener " + l.getClass().getSimpleName() + "@" + l.hashCode() + " registered.", DebugLevel.NO_BIG_DEAL);
     }
 
     public static void unregisterListener(Listener l) {

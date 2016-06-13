@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import me.ddevil.core.CustomPlugin;
+import me.ddevil.core.CustomPlugin.DebugLevel;
 import me.ddevil.core.Manager;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -43,27 +44,24 @@ public abstract class BasicMessageManager implements MessageManager {
     @Override
     public Manager setup() {
         //Colors
-        CustomPlugin.instance.debug("Loading colors...", 3);
+        CustomPlugin.instance.debug("Loading colors...", DebugLevel.NO_BIG_DEAL);
         colorDesign = CustomPlugin.colorDesign;
         CustomPlugin.instance.debug(new String[]{
             "Colors set to:",
-            "Primary: " + colorDesign.getPrimaryColor(),
-            "Secondary: " + colorDesign.getSecondaryColor(),
-            "Neutral: " + colorDesign.getNeutralColor(),
-            "Warning: " + colorDesign.getWarningColor()
-        }, 2);
+            colorDesign.toString()
+        }, DebugLevel.NO_BIG_DEAL);
         //Global Messages
         FileConfiguration messagesConfig = CustomPlugin.pluginConfig;
-        CustomPlugin.instance.debug("Loading basic messages...", 3);
+        CustomPlugin.instance.debug("Loading basic messages...", DebugLevel.NO_BIG_DEAL);
         messageSeparator = translateColors(messagesConfig.getString("messages.messageSeparator"));
         pluginPrefix = translateColors(messagesConfig.getString("messages.messagePrefix"));
         header = translateAll(messagesConfig.getString("messages.header"));
-        CustomPlugin.instance.debug("Messages loaded!", 3);
+        CustomPlugin.instance.debug("Messages loaded!", DebugLevel.NO_BIG_DEAL);
         CustomPlugin.instance.debug(new String[]{
             "Basic messages:",
             "messageSeparator: " + messageSeparator,
             "pluginPrefix: " + pluginPrefix,
-            "header: " + header}, 2);
+            "header: " + header}, DebugLevel.NO_BIG_DEAL);
         postSetup();
         return this;
     }
@@ -80,13 +78,13 @@ public abstract class BasicMessageManager implements MessageManager {
         CustomPlugin.instance.debug("Getting color for number " + i + "...");
         switch (i) {
             case 1:
-                return colorDesign.getPrimaryColor();
+                return colorDesign.primaryColor;
             case 2:
-                return colorDesign.getSecondaryColor();
+                return colorDesign.secondaryColor;
             case 3:
-                return colorDesign.getNeutralColor();
+                return colorDesign.neutralColor;
             case 4:
-                return colorDesign.getWarningColor();
+                return colorDesign.warningColor;
             default:
                 throw new IllegalArgumentException("Color identifier must be between 1 and 4");
         }

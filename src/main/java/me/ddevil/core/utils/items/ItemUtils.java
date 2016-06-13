@@ -26,9 +26,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import me.ddevil.core.CustomPlugin;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
@@ -43,7 +42,90 @@ import org.bukkit.inventory.meta.ItemMeta;
  */
 public class ItemUtils {
 
-    private static boolean glowRegistrado = false;
+    public static class Deserializer {
+
+        /**
+         * Gets an item back from the Map created by {@link serialize()}
+         *
+         * @param map The map to deserialize from.
+         * @return The deserialized item.
+         * @throws IllegalAccessException Things can go wrong.
+         * @throws IllegalArgumentException Things can go wrong.
+         * @throws InvocationTargetException Things can go wrong.
+         */
+        public static ItemStack deserialize(Map<String, Object> map) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+            ItemStack i = ItemStack.deserialize(map);
+            if (map.containsKey("meta")) {
+                try {
+                    //  org.bukkit.craftbukkit.v1_8_R3.CraftMetaItem$SerializableMeta
+                    //  CraftMetaItem.SerializableMeta.deserialize(Map<String, Object>)
+                    if (ITEM_META_DESERIALIZATOR != null) {
+                        ItemMeta im = (ItemMeta) DESERIALIZE.invoke(i, map.get("meta"));
+                        i.setItemMeta(im);
+                    }
+                } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                    throw e;
+                }
+            }
+            return i;
+        }
+
+        /**
+         * Serializes an ItemStack and it's ItemMeta, use {@link deserialize()}
+         * to get the item back.
+         *
+         * @param item Item to serialize
+         * @return A HashMap with the serialized item
+         */
+        public static Map<String, Object> serialize(ItemStack item) {
+            HashMap<String, Object> itemDocument = new HashMap(item.serialize());
+            if (item.hasItemMeta()) {
+                itemDocument.put("meta", new HashMap(item.getItemMeta().serialize()));
+            }
+            return itemDocument;
+        }
+
+        //Below here lays some crazy shit that make the above methods work :D yay!
+        // <editor-fold desc="Some crazy shit" defaultstate="collapsed">
+    /*
+         * @return The string used in the CraftBukkit package for the version.
+         */
+        public static String getVersion() {
+            String name = Bukkit.getServer().getClass().getPackage().getName();
+            String version = name.substring(name.lastIndexOf('.') + 1) + ".";
+            return version;
+        }
+
+        /**
+         *
+         * @param className
+         * @return
+         */
+        public static Class<?> getOBCClass(String className) {
+            String fullName = "org.bukkit.craftbukkit." + getVersion() + className;
+            Class<?> clazz = null;
+            try {
+                clazz = Class.forName(fullName);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return clazz;
+        }
+        private static final Class ITEM_META_DESERIALIZATOR = getOBCClass("inventory.CraftMetaItem").getClasses()[0];
+        private static final Method DESERIALIZE = getDeserialize();
+
+        private static Method getDeserialize() {
+
+            try {
+                return ITEM_META_DESERIALIZATOR.getMethod("deserialize", new Class[]{Map.class});
+            } catch (NoSuchMethodException | SecurityException ex) {
+                return null;
+            }
+        }
+        // </editor-fold>
+
+    }
+    private static boolean glowRegistered = false;
 
     //geral
     public static final ItemStack NA = ItemUtils.createItem(Material.BARRIER, "§4§l§o§nN/A");
@@ -65,19 +147,17 @@ public class ItemUtils {
         return i;
     }
 
-    public static ItemStack createItem(Material material, String nome) {
-        ItemStack is = new ItemStack(material);
-        ItemMeta im = is.getItemMeta();
-        im.setDisplayName(nome);
-        is.setItemMeta(im);
-        return is;
-    }
-
     public static ItemStack createItem(ConfigurationSection itemSection) throws IllegalArgumentException {
         try {
             CustomPlugin.instance.debug("Loading item " + itemSection.getName() + " from config.");
-            String itemName = CustomPlugin.messageManager.translateAll(itemSection.getString("name"));
-            List<String> itemLore = CustomPlugin.messageManager.translateAll(itemSection.getStringList("lore"));
+            String itemName = null;
+            if (itemSection.contains("name")) {
+                itemName = CustomPlugin.messageManager.translateAll(itemSection.getString("name"));
+            }
+            List<String> itemLore = null;
+            if (itemSection.contains("lore")) {
+                itemLore = CustomPlugin.messageManager.translateAll(itemSection.getStringList("lore"));
+            }
             Material m = Material.valueOf(itemSection.getString("type"));
             byte data = ((Integer) itemSection.getInt("data")).byteValue();
             return createItem(
@@ -85,8 +165,22 @@ public class ItemUtils {
                     itemName,
                     itemLore);
         } catch (Exception e) {
-            throw new IllegalArgumentException("Configuration Section " + itemSection.getCurrentPath() + " is baddly formated! " + e.getCause().toString());
+            e.printStackTrace();
+            String info = " (" + e.getCause().getMessage() + ")";
+            if (itemSection == null) {
+                throw new IllegalArgumentException("Given configuration section is null! " + e.getCause().toString() + info);
+            } else {
+                throw new IllegalArgumentException("Configuration Section " + itemSection.getCurrentPath() + " is baddly formated!" + info);
+            }
         }
+    }
+
+    public static ItemStack createItem(Material material, String nome) {
+        ItemStack is = new ItemStack(material);
+        ItemMeta im = is.getItemMeta();
+        im.setDisplayName(nome);
+        is.setItemMeta(im);
+        return is;
     }
 
     public static ItemStack createItem(ItemStack material, String nome) {
@@ -100,10 +194,10 @@ public class ItemUtils {
         return is;
     }
 
-    public static ItemStack createItem(ItemStack material, String nome, Collection<String> desc) {
+    public static ItemStack createItem(ItemStack material, String nome, List<String> desc) {
         ItemStack is = ItemUtils.createItem(material, nome);
         ItemMeta im = is.getItemMeta();
-        im.setLore(new ArrayList<String>(desc));
+        im.setLore(desc);
         is.setItemMeta(im);
         return is;
     }
@@ -116,8 +210,26 @@ public class ItemUtils {
         return is;
     }
 
+    public static ItemStack clearLore(ItemStack i) {
+        ItemMeta itemMeta = i.getItemMeta();
+        itemMeta.setLore(null);
+        i.setItemMeta(itemMeta);
+        return i;
+    }
+
+    public static ItemStack addToLore(ItemStack i, List<String> strings) {
+        List<String> lore = getLore(i);
+        for (String toAdd : strings) {
+            lore.add(toAdd);
+        }
+        ItemMeta itemMeta = i.getItemMeta();
+        itemMeta.setLore(lore);
+        i.setItemMeta(itemMeta);
+        return i;
+    }
+
     public static void addGlow(ItemStack i) {
-        if (!glowRegistrado) {
+        if (!glowRegistered) {
             registerGlow();
         }
         Glow glow = new Glow(70);
@@ -152,40 +264,14 @@ public class ItemUtils {
         return false;
     }
 
-    private static void registerGlow() {
-        try {
-            Field f = Enchantment.class.getDeclaredField("acceptingNew");
-            f.setAccessible(true);
-            f.set(null, true);
-        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
-
-        }
-        try {
-            Glow glow = new Glow(70);
-            Enchantment.registerEnchantment(glow);
-            glowRegistrado = true;
-        } catch (IllegalArgumentException e) {
-        }
+    public static boolean isValid(ItemStack item) {
+        return isValid(item, true);
     }
 
-    public static ItemStack criarBotaoSim(String itemVendido, String finalCusto) {
-        ItemStack itemCompra = new ItemStack(Material.EMERALD_BLOCK);
-        ItemMeta IMCompra = itemCompra.getItemMeta();
-        IMCompra.setDisplayName("§a§lComprar este " + itemVendido);
-        IMCompra.setLore(Arrays.asList(new String[]{"§7Compre este " + itemVendido + " por " + finalCusto
-        }));
-        itemCompra.setItemMeta(IMCompra);
-        return itemCompra;
-    }
-
-    public static boolean isValido(ItemStack item) {
-        return isValido(item, true);
-    }
-
-    public static boolean isValido(ItemStack item, boolean comNome) {
+    public static boolean isValid(ItemStack item, boolean checkName) {
         if (item != null) {
             if (item.getItemMeta() != null) {
-                if (comNome) {
+                if (checkName) {
                     if (item.getItemMeta().getDisplayName() != null) {
                         return true;
                     }
@@ -261,60 +347,20 @@ public class ItemUtils {
         return false;
     }
 
-    public static ItemStack clearLore(ItemStack i) {
-        ItemMeta itemMeta = i.getItemMeta();
-        itemMeta.setLore(null);
-        i.setItemMeta(itemMeta);
-        return i;
-    }
-
-    public static ItemStack addToLore(ItemStack i, List<String> strings) {
-        List<String> lore = getLore(i);
-        for (String toAdd : strings) {
-            lore.add(toAdd);
-        }
-        ItemMeta itemMeta = i.getItemMeta();
-        itemMeta.setLore(lore);
-        i.setItemMeta(itemMeta);
-        return i;
-    }
-
-    //Use this to retrieve the item back
-    private static final Class ITEM_META_DESERIALIZATOR = CustomPlugin.getOBCClass("inventory.CraftMetaItem").getClasses()[0];
-    private static final Method DESERIALIZE = getDeserialize();
-
-    public static Method getDeserialize() {
-
+    private static void registerGlow() {
         try {
-            return ITEM_META_DESERIALIZATOR.getMethod("deserialize", new Class[]{Map.class});
-        } catch (NoSuchMethodException | SecurityException ex) {
-            return null;
-        }
-    }
+            Field f = Enchantment.class.getDeclaredField("acceptingNew");
+            f.setAccessible(true);
+            f.set(null, true);
+        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
 
-    public static ItemStack deserialize(Map<String, Object> s) {
-        ItemStack i = ItemStack.deserialize(s);
-        if (s.containsKey("meta")) {
-            try {
-                //  org.bukkit.craftbukkit.v1_8_R3.CraftMetaItem$SerializableMeta
-                //  CraftMetaItem.SerializableMeta.deserialize(Map<String, Object>)
-                if (ITEM_META_DESERIALIZATOR != null) {
-                    ItemMeta im = (ItemMeta) DESERIALIZE.invoke(i, s.get("meta"));
-                    i.setItemMeta(im);
-                }
-            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-                CustomPlugin.instance.printException("There was a reflection problem while parsing meta " + s.toString(), e);
-            }
         }
-        return i;
-    }
-
-    public static Map<String, Object> itemToMap(ItemStack item) {
-        HashMap<String, Object> itemDocument = new HashMap(item.serialize());
-        if (item.hasItemMeta()) {
-            itemDocument.put("meta", new HashMap(item.getItemMeta().serialize()));
+        try {
+            Glow glow = new Glow(70);
+            Enchantment.registerEnchantment(glow);
+            glowRegistered = true;
+        } catch (IllegalArgumentException e) {
         }
-        return itemDocument;
     }
 }
 

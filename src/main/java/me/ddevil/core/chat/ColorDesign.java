@@ -13,10 +13,10 @@ public class ColorDesign {
 
     public static final ColorDesign DEFAULT_COLOR_DESIGN = new ColorDesign('b', '3', '7', 'c');
 
-    private final char primaryColor;
-    private final char secondaryColor;
-    private final char neutralColor;
-    private final char warningColor;
+    public final char primaryColor;
+    public final char secondaryColor;
+    public final char neutralColor;
+    public final char warningColor;
 
     public ColorDesign(char primaryColor, char secondaryColor, char neutralColor, char warningColor) {
         this.primaryColor = primaryColor;
@@ -25,20 +25,12 @@ public class ColorDesign {
         this.warningColor = warningColor;
     }
 
-    public char getWarningColor() {
-        return warningColor;
-    }
-
-    public char getSecondaryColor() {
-        return secondaryColor;
-    }
-
-    public char getPrimaryColor() {
-        return primaryColor;
-    }
-
-    public char getNeutralColor() {
-        return neutralColor;
+    @Override
+    public String toString() {
+        return "primaryColor = " + primaryColor + System.lineSeparator()
+                + "secondaryColor = " + secondaryColor + System.lineSeparator()
+                + "neutralColor = " + neutralColor + System.lineSeparator()
+                + "warningColor = " + warningColor;
     }
 
 }
