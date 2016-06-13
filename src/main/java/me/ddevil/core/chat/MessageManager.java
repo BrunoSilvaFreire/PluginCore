@@ -25,6 +25,10 @@ import me.ddevil.core.Manager;
  */
 public interface MessageManager extends Manager {
 
+    public boolean isValidColor(char c);
+
+    public char getColor(int i);
+
     /**
      * Gets the colored and beautiful plugin name Ex: §a§lMine§e§lMe
      *

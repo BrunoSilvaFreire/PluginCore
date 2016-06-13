@@ -22,6 +22,10 @@ public class BasicInventoryItem extends BasicInventoryObject {
         this.icon = icon;
     }
 
+    public void setIcon(ItemStack icon) {
+        this.icon = icon;
+    }
+
     @Override
     public ItemStack getIcon() {
         return icon;

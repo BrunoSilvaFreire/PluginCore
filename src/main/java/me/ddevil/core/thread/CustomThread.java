@@ -24,9 +24,10 @@ import java.util.ArrayList;
  */
 public abstract class CustomThread extends Thread {
 
-    private long startTime;
-    private long endTime;
-    private long totalTime;
+    protected long startTime;
+    protected long endTime;
+    protected long totalTime;
+    protected long secondsTotalTime;
     private final ArrayList<ThreadFinishListener> listeners = new ArrayList<>();
 
     public final void addListener(final ThreadFinishListener listener) {
@@ -50,6 +51,7 @@ public abstract class CustomThread extends Thread {
             doRun();
             endTime = System.currentTimeMillis();
             totalTime = endTime - startTime;
+            secondsTotalTime = totalTime / 1000;
         } finally {
             notifyListeners();
         }

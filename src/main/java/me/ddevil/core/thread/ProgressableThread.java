@@ -6,7 +6,6 @@
 package me.ddevil.core.thread;
 
 import java.util.ArrayList;
-import me.ddevil.core.CustomPlugin;
 
 /**
  *

@@ -25,6 +25,9 @@ import me.ddevil.core.utils.items.ItemUtils;
  */
 public class BasicInventoryContainer implements InventoryContainer {
 
+    protected int pos2;
+    protected int pos1;
+
     @Override
     public boolean hasItemStack() {
         return false;
@@ -36,7 +39,7 @@ public class BasicInventoryContainer implements InventoryContainer {
     }
 
     @Override
-    public void removeItem(int slot) {
+    public void removeObject(int slot) {
         if (hasObjectIn(slot)) {
             inventoryObjects.remove(slot);
         }
@@ -48,9 +51,9 @@ public class BasicInventoryContainer implements InventoryContainer {
     }
 
     public void fill(ItemStack item) {
-        for (Integer slot : map) {
-            CustomPlugin.instance.debug("Placing item in slot " + slot);
+        for (int slot = 0; slot < map.length; slot++) {
             if (canPlaceIn(slot)) {
+                CustomPlugin.instance.debug("Placing item " + ItemUtils.toString(item) + " in slot " + slot);
                 setItem(slot, item);
             } else {
                 CustomPlugin.instance.debug("Could not place item " + ItemUtils.toString(item) + " in slot " + slot + " while filling");
@@ -79,19 +82,15 @@ public class BasicInventoryContainer implements InventoryContainer {
     protected final Inventory inventory;
     protected final InventoryMenu menu;
     protected final Map<Integer, InventoryObject> inventoryObjects = new HashMap();
-    private final InventoryObjectClickListener listener;
+    protected InventoryObjectClickListener listener;
 
     public BasicInventoryContainer(InventoryMenu menu, int pos1, int pos2) {
-        int containerSize = 0;
         this.menu = menu;
         this.inventory = menu.getBukkitInventory();
-        this.map = InventoryUtils.getSquare(inventory, pos1, pos2);
-        for (int pos : map) {
-            if (inventory.getItem(pos) != null) {
-                containerSize++;
-            }
-        }
-        this.size = containerSize;
+        this.map = InventoryUtils.getSquare(pos1, pos2);
+        this.pos1 = map[0];
+        this.pos2 = map[map.length - 1];
+        this.size = map.length - 1;
         this.listener = new ContainerClickHandler();
         this.height = size / 9;
         this.width = size % 9;
@@ -101,7 +100,7 @@ public class BasicInventoryContainer implements InventoryContainer {
         int containerSize = 0;
         this.menu = menu;
         this.inventory = menu.getBukkitInventory();
-        this.map = InventoryUtils.getSquare(inventory, pos1, pos2);
+        this.map = InventoryUtils.getSquare(pos1, pos2);
         for (int pos : map) {
             if (inventory.getItem(pos) != null) {
                 containerSize++;
@@ -126,33 +125,34 @@ public class BasicInventoryContainer implements InventoryContainer {
     }
 
     @Override
-    public void setObject(int slot, InventoryObject item) {
-        inventoryObjects.put(slot, item);
-        boolean hasItemStack = item.hasItemStack();
-        String msg = "Setting inventory object §a" + item.getClass().getSimpleName() + " §7in slot §b" + slot + " §7in inventory §e" + toString();
-        if (hasItemStack) {
-            ItemStack itemStack = item.getIcon();
-            inventory.setItem(slot, itemStack);
-        }
-        if (item.hasMultiSlots()) {
-            List<Integer> slots = item.getMultiSlots();
-            for (int i : slots) {
-                if (i != slot) {
-                    inventoryObjects.put(i, item);
-                    if (hasItemStack) {
-                        inventory.setItem(i, item.getIcon());
+    public void setObject(int id, InventoryObject item) {
+        if (map.length > id) {
+            int slot = map[id];
+            inventoryObjects.put(slot, item);
+            boolean hasItemStack = item.hasItemStack();
+            if (hasItemStack) {
+                ItemStack itemStack = item.getIcon();
+                inventory.setItem(slot, itemStack);
+            }
+            if (item.hasMultiSlots()) {
+                List<Integer> slots = item.getMultiSlots();
+                for (int i : slots) {
+                    if (i != slot) {
+                        inventoryObjects.put(i, item);
+                        if (hasItemStack) {
+                            inventory.setItem(i, item.getIcon());
+                        }
                     }
                 }
             }
         }
-        CustomPlugin.instance.broadcastDebug(msg);
     }
 
     @Override
     public void clear() {
         for (int i : map) {
             inventory.setItem(i, null);
-            removeItem(i);
+            removeObject(i);
         }
     }
 
@@ -182,8 +182,8 @@ public class BasicInventoryContainer implements InventoryContainer {
 
     @Override
     public void addObject(InventoryObject itemIcon) {
-        for (int i : map) {
-            if (canPlaceIn(i)) {
+        for (int i = 0; i < map.length; i++) {
+            if (canPlaceIn(map[i])) {
                 setObject(i, itemIcon);
                 break;
             }
@@ -192,8 +192,8 @@ public class BasicInventoryContainer implements InventoryContainer {
 
     @Override
     public void addItem(ItemStack item) {
-        for (int i : map) {
-            if (canPlaceIn(i)) {
+        for (int i = 0; i < map.length; i++) {
+            if (canPlaceIn(map[i])) {
                 setItem(i, item);
                 break;
             }
@@ -223,7 +223,9 @@ public class BasicInventoryContainer implements InventoryContainer {
     @Override
     public void update() {
         for (int i : inventoryObjects.keySet()) {
-            menu.getBukkitInventory().setItem(i, inventoryObjects.get(i).getIcon());
+            InventoryObject o = inventoryObjects.get(i);
+            o.update();
+            menu.getBukkitInventory().setItem(i, o.getIcon());
         }
     }
 

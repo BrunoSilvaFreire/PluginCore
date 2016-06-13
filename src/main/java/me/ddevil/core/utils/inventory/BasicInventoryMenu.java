@@ -25,6 +25,22 @@ public abstract class BasicInventoryMenu implements InventoryMenu {
     protected final HashMap<Integer, InventoryObject> objects = new HashMap();
     protected final Inventory mainInventory;
 
+    public void fill(ItemStack i) {
+        for (int j = 0; j < mainInventory.getSize(); j++) {
+            mainInventory.setItem(j, i);
+        }
+    }
+
+    public void clear() {
+        mainInventory.clear();
+        objects.clear();
+    }
+
+    public void clearAndFill(ItemStack i) {
+        clear();
+        fill(i);
+    }
+
     public BasicInventoryMenu(String name, int totalLanes) {
         this.mainInventory = InventoryUtils.createInventory(name, totalLanes);
     }
@@ -78,10 +94,12 @@ public abstract class BasicInventoryMenu implements InventoryMenu {
     @EventHandler
     public void onClick(InventoryObjectClickEvent e) {
         InventoryObject obj = e.getObject();
-        if (obj.getMenu().equals(this)) {
-            if (obj instanceof ClickableInventoryObject) {
-                ClickableInventoryObject c = (ClickableInventoryObject) obj;
-                c.getInteractListener().onInteract(e);
+        if (obj.getMenu() != null) {
+            if (obj.getMenu().equals(this)) {
+                if (obj instanceof ClickableInventoryObject) {
+                    ClickableInventoryObject c = (ClickableInventoryObject) obj;
+                    c.getInteractListener().onInteract(e);
+                }
             }
         }
     }

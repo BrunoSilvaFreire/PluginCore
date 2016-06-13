@@ -17,7 +17,7 @@
 package me.ddevil.core.chat;
 
 import me.ddevil.core.CustomPlugin;
-import me.ddevil.core.Manager;
+import org.bukkit.entity.Player;
 
 /**
  *
@@ -25,23 +25,20 @@ import me.ddevil.core.Manager;
  */
 public class PluginChatManager extends BasicChatManager {
 
-    private static PluginChatManager instance;
+    private final ColorDesign colors;
 
-    public static PluginChatManager getInstance(CustomPlugin plugin) {
-        if (instance == null) {
-            instance = new PluginChatManager(plugin);
-        }
-        return instance;
-    }
-    private final CustomPlugin plugin;
-
-    public PluginChatManager(CustomPlugin plugin) {
-        this.plugin = plugin;
+    public PluginChatManager() {
+        this.colors = CustomPlugin.colorDesign;
     }
 
     @Override
-    public Manager setup() {
-        return this;
+    public void sendMessage(Player p, String string) {
+        p.sendMessage(
+                CustomPlugin.messageManager.getPluginPrefix()
+                + CustomPlugin.messageManager.getMessageSeparator()
+                + "§" + colors.getNeutralColor()
+                + CustomPlugin.messageManager.translateAll(string)
+        );
     }
 
 }

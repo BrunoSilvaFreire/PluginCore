@@ -11,6 +11,8 @@ package me.ddevil.core.chat;
  */
 public class ColorDesign {
 
+    public static final ColorDesign DEFAULT_COLOR_DESIGN = new ColorDesign('b', '3', '7', 'c');
+
     private final char primaryColor;
     private final char secondaryColor;
     private final char neutralColor;

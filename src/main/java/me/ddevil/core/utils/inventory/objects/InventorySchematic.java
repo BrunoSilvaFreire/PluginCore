@@ -25,7 +25,7 @@ public class InventorySchematic {
 
     public InventorySchematic(Inventory inv, int pos1, int pos2) {
         Map<Integer, ItemStack> presetMap = new HashMap();
-        for (int i : InventoryUtils.getSquare(inv, pos1, pos2)) {
+        for (int i : InventoryUtils.getSquare(pos1, pos2)) {
             if (inv.getItem(i) != null) {
                 presetMap.put(i, inv.getItem(i));
             }

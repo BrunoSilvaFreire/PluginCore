@@ -7,6 +7,9 @@ package me.ddevil.core.utils.inventory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import me.ddevil.core.utils.items.ItemUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -55,6 +58,16 @@ public class InventoryUtils {
         }
     }
 
+    public static int getTotalAmountIn(Inventory i, ItemStack item) {
+        int a = 0;
+        for (ItemStack i1 : i) {
+            if (ItemUtils.equalMaterial(i1, item)) {
+                a += i1.getAmount();
+            }
+        }
+        return a;
+    }
+
     public static boolean wasClickedInLane(Inventory i, int clickedSlot, int lane) {
         return Arrays.asList(getLane(i, lane)).contains(clickedSlot);
     }
@@ -81,7 +94,7 @@ public class InventoryUtils {
     }
 
     public static void drawSquare(Inventory inv, int pos1, int pos2, ItemStack item, boolean replace) {
-        for (int i : getSquare(inv, pos1, pos2)) {
+        for (int i : getSquare(pos1, pos2)) {
             if (replace) {
                 inv.setItem(i, item);
             } else if (inv.getItem(i) != null) {
@@ -115,11 +128,13 @@ public class InventoryUtils {
     }
 
     //Squares
-    public static Integer[] getSquare(Inventory inv, int pos1, int pos2) {
-        return getSquare(inv.getSize(), pos1, pos2);
+    public static int getSquareLength(int pos1, int pos2) {
+        Integer[] square = getSquare(pos1, pos2);
+        int size = square.length - 1;
+        return size % 9;
     }
 
-    public static Integer[] getSquare(int size, int pos1, int pos2) {
+    public static Integer[] getSquare(int pos1, int pos2) {
         int minx = Math.min(pos1 % 9, pos2 % 9);
         int miny = Math.min(pos1 / 9, pos2 / 9);
         int maxx = Math.max(pos1 % 9, pos2 % 9);
@@ -227,6 +242,14 @@ public class InventoryUtils {
     public static int getLastSlotInLane(int lane) {
         return lane * 9 + 8;
     }
+
+    public static int getFirstSlotInLane(int lane, int width) {
+        return lane * width;
+    }
+
+    public static int getLastSlotInLane(int lane, int width) {
+        return (lane * width) + width - 1;
+    }
 //Item
 
     public static boolean hasInInventory(ItemStack i, Inventory inv) {
@@ -244,5 +267,40 @@ public class InventoryUtils {
             }
         }
         return locations.toArray(new Integer[locations.size()]);
+    }
+
+    /**
+     *
+     * @param owner
+     * @param ingredientsMap
+     * @return The items remaining amount of items to be removed
+     */
+    public static HashMap<ItemStack, Integer> removeItems(Player owner, Map<ItemStack, Integer> ingredientsMap) {
+        HashMap<ItemStack, Integer> itemsLeftToRemove = new HashMap(ingredientsMap);
+        PlayerInventory inventory = owner.getInventory();
+        Set<ItemStack> ingredients = ingredientsMap.keySet();
+        for (ItemStack ingredient : ingredients) {
+            //How much we need to remove
+
+            for (ItemStack i : inventory) {
+                if (ItemUtils.equalMaterial(i, ingredient)) {
+                    //Get how many left to remove
+                    int amountToRemove = itemsLeftToRemove.get(ingredient);
+                    //How many there are
+                    int amount = i.getAmount();
+                    //Check if we can remove all at once
+                    if (amount - amountToRemove > 0) {
+                        //Remove all at once and remove ingredient from "yetToRemove" list
+                        i.setAmount(amount - amountToRemove);
+                        itemsLeftToRemove.remove(ingredient);
+                    } else {
+                        //Remove what we can and delete item
+                        itemsLeftToRemove.put(ingredient, itemsLeftToRemove.get(ingredient) - amount);
+                        i.setType(Material.AIR);
+                    }
+                }
+            }
+        }
+        return itemsLeftToRemove;
     }
 }

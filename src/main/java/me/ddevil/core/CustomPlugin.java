@@ -21,6 +21,8 @@ import java.io.File;
 import java.lang.reflect.Field;
 import me.ddevil.core.chat.ChatManager;
 import me.ddevil.core.chat.ColorDesign;
+import me.ddevil.core.chat.PluginChatManager;
+import me.ddevil.core.chat.PluginMessageManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -36,22 +38,67 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public abstract class CustomPlugin extends JavaPlugin implements Listener {
 
+    //General info
     public static CustomPlugin instance;
-    protected static CommandMap commandMap;
+    public static ColorDesign colorDesign;
     public static ChatManager chatManager;
     public static MessageManager messageManager;
-    public static ColorDesign defaultColorDesign;
-    public int minimumDebugPriotity = 0;
-    //Files
-    public static File pluginFolder;
-    public static File pluginConfigFile;
+
+    //<editor-fold desc="Techy and ugly stuff" defaultstate="collapsed">
+    protected static CommandMap commandMap;
+    public int minimumDebugPriority = 0;
     private boolean allowBroadcastdebug;
 
-    public abstract String getPluginName();
+    public CommandMap getCommandMap() {
+        return commandMap;
+    }
 
-    public abstract FileConfiguration getMessagesConfig();
-
-    public abstract void reload(Player p);
+    @Override
+    public final void onEnable() {
+        instance = this;
+        pluginFolder = getDataFolder();
+        if (!pluginFolder.exists()) {
+            debug("Plugin folder not found! Making one...", 3);
+            pluginFolder.mkdir();
+        }
+        pluginConfigFile = new File(pluginFolder, "config.yml");
+        if (!pluginConfigFile.exists()) {
+            //Load from plugin
+            debug("Config file not found! Making one...", 3);
+            loadResource(pluginConfigFile, "config.yml");
+        }
+        pluginConfig = YamlConfiguration.loadConfiguration(pluginConfigFile);
+        try {
+            Class craftServerClass = getOBCClass("CraftServer");
+            final Field f = craftServerClass.getDeclaredField("commandMap");
+            f.setAccessible(true);
+            commandMap = (CommandMap) f.get(Bukkit.getServer());
+        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
+            Bukkit.getPluginManager().disablePlugin(this);
+        }
+        //Initialize components
+        doSetup();
+        //Check for default components
+        if (colorDesign == null) {
+            colorDesign = ColorDesign.DEFAULT_COLOR_DESIGN;
+            debug("Plugin didn't specify any Color Design, loading default one...", 2);
+        }
+        if (chatManager == null) {
+            chatManager = (ChatManager) new PluginChatManager().setup();
+            debug("Plugin didn't specify any Chat Manager, loading default one...", 2);
+        }
+        if (messageManager == null) {
+            messageManager = (MessageManager) new PluginMessageManager().setup();
+            debug("Plugin didn't specify any Message Manager, loading default one...", 2);
+        }
+    }
+    //</editor-fold>
+    //<editor-fold desc="Files/Configs variables" defaultstate="collapsed">
+    public static File pluginFolder;
+    public static File pluginConfigFile;
+    public static FileConfiguration pluginConfig;
+    //</editor-fold>
+    //<editor-fold desc="NMS/OBC Reflection" defaultstate="collapsed">
 
     public static String getVersion() {
         String name = Bukkit.getServer().getClass().getPackage().getName();
@@ -81,33 +128,18 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
         return clazz;
     }
 
-    public static FileConfiguration pluginConfig;
+    //</editor-fold>
+    //<editor-fold desc="Abstract methods" defaultstate="collapsed">
+    public abstract String getPluginName();
 
-    @Override
-    public void onEnable() {
-        instance = this;
-        pluginFolder = getDataFolder();
-        if (!pluginFolder.exists()) {
-            debug("Plugin folder not found! Making one...", 3);
-            pluginFolder.mkdir();
-        }
-        pluginConfigFile = new File(pluginFolder, "config.yml");
-        if (!pluginConfigFile.exists()) {
-            //Load from plugin
-            debug("Config file not found! Making one...", 3);
-            loadResource(pluginConfigFile, "config.yml");
-        }
-        pluginConfig = YamlConfiguration.loadConfiguration(pluginConfigFile);
-        try {
-            Class craftServerClass = getOBCClass("CraftServer");
-            final Field f = craftServerClass.getDeclaredField("commandMap");
-            f.setAccessible(true);
-            commandMap = (CommandMap) f.get(Bukkit.getServer());
-        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
-            Bukkit.getPluginManager().disablePlugin(this);
-        }
-    }
+    public abstract FileConfiguration getMessagesConfig();
 
+    protected abstract void doSetup();
+
+    protected abstract void doReload();
+
+    //</editor-fold>
+    //<editor-fold desc="Commands and permissions" defaultstate="collapsed">
     public static void registerCommand(Command cmd) {
         CustomPlugin.registerCommand(instance, cmd);
     }
@@ -135,40 +167,15 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
         }
     }
 
-    public static void registerListener(Listener l) {
-        Bukkit.getPluginManager().registerEvents(l, instance);
-        instance.debug("Listener " + l.getClass().getSimpleName() + "@" + l.hashCode() + " registered.", 2);
-    }
-
-    public static void unregisterListener(Listener l) {
-        HandlerList.unregisterAll(l);
-    }
-
-    public CommandMap getCommandMap() {
-        return commandMap;
-    }
-
-    public FileConfiguration loadConfig() {
-        FileConfiguration fc = getConfig();
-        saveConfig();
-        return fc;
-    }
-
-    public FileConfiguration loadResource(File config, String resource) {
-        if (!config.exists()) {
-            //Load from plugin
-            saveResource(resource, true);
-        }
-        return YamlConfiguration.loadConfiguration(config);
-    }
-
+    //</editor-fold>
+    //<editor-fold desc="Debugging" defaultstate="collapsed">
     public void broadcastDebug(String msg) {
-        broadcastDebug(msg, minimumDebugPriotity);
+        broadcastDebug(msg, minimumDebugPriority);
     }
 
     public void broadcastDebug(String msg, int priority) {
         if (allowBroadcastdebug) {
-            if (priority >= minimumDebugPriotity) {
+            if (priority >= minimumDebugPriority) {
                 StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
                 StackTraceElement e = stackTraceElements[3];
                 Bukkit.broadcastMessage("§c§l" + getPluginName() + "§c§lDebug§7-§e" + e.getClassName() + "@" + e.getMethodName() + "§o(" + e.getLineNumber() + ") §6§l> §7" + msg);
@@ -261,7 +268,7 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
      * @param priority The message's priority
      */
     public void debug(String msg, int priority) {
-        if (priority >= minimumDebugPriotity) {
+        if (priority >= minimumDebugPriority) {
             getLogger().info(msg);
         }
     }
@@ -289,4 +296,32 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
         debug("--== Error ==--", true);
         debug();
     }
+
+    //</editor-fold >
+    public void reload(Player p) {
+        chatManager.sendMessage(p, "Reloading...");
+        long start = System.currentTimeMillis();
+        doReload();
+        long end = System.currentTimeMillis();
+        long time = end - start;
+        chatManager.sendMessage(p, "Reloaded! Took " + (time / 1000) + "seconds! " + colorDesign.getSecondaryColor() + "(" + time + "ms)");
+    }
+
+    public static void registerListener(Listener l) {
+        Bukkit.getPluginManager().registerEvents(l, instance);
+        instance.debug("Listener " + l.getClass().getSimpleName() + "@" + l.hashCode() + " registered.", 2);
+    }
+
+    public static void unregisterListener(Listener l) {
+        HandlerList.unregisterAll(l);
+    }
+
+    public FileConfiguration loadResource(File config, String resource) {
+        if (!config.exists()) {
+            //Load from plugin
+            saveResource(resource, true);
+        }
+        return YamlConfiguration.loadConfiguration(config);
+    }
+
 }

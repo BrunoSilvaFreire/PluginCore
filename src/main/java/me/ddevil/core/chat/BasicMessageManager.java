@@ -38,49 +38,22 @@ public abstract class BasicMessageManager implements MessageManager {
     //Color char
     private static final char colorChar = '&';
     //Colors
-    public static String primaryColor;
-    public static String secondaryColor;
-    public static String neutralColor;
-    public static String warningColor;
+    private ColorDesign colorDesign;
 
     @Override
     public Manager setup() {
         //Colors
         CustomPlugin.instance.debug("Loading colors...", 3);
-        FileConfiguration messagesConfig = CustomPlugin.instance.getMessagesConfig();
-        if (!messagesConfig.contains("colors.primaryColor")) {
-            messagesConfig.set("colors.primaryColor", CustomPlugin.defaultColorDesign.getPrimaryColor());
-            primaryColor = String.valueOf(CustomPlugin.defaultColorDesign.getPrimaryColor());
-        } else {
-            primaryColor = messagesConfig.getString("colors.primaryColor");
-        }
-        if (!messagesConfig.contains("colors.secondaryColor")) {
-            messagesConfig.set("colors.secondaryColor", CustomPlugin.defaultColorDesign.getPrimaryColor());
-            secondaryColor = String.valueOf(CustomPlugin.defaultColorDesign.getPrimaryColor());
-        } else {
-            secondaryColor = messagesConfig.getString("colors.secondaryColor");
-        }
-        if (!messagesConfig.contains("colors.neutralColor")) {
-            messagesConfig.set("colors.neutralColor", CustomPlugin.defaultColorDesign.getPrimaryColor());
-            neutralColor = String.valueOf(CustomPlugin.defaultColorDesign.getPrimaryColor());
-        } else {
-            neutralColor = messagesConfig.getString("colors.neutralColor");
-        }
-        if (!messagesConfig.contains("colors.warningColor")) {
-            messagesConfig.set("colors.warningColor", CustomPlugin.defaultColorDesign.getPrimaryColor());
-            warningColor = String.valueOf(CustomPlugin.defaultColorDesign.getPrimaryColor());
-        } else {
-            warningColor = messagesConfig.getString("colors.warningColor");
-        }
-        CustomPlugin.instance.debug("Colors loaded!", 3);
+        colorDesign = CustomPlugin.colorDesign;
         CustomPlugin.instance.debug(new String[]{
             "Colors set to:",
-            "Primary: " + primaryColor,
-            "Secondary: " + secondaryColor,
-            "Neutral: " + neutralColor,
-            "Warning: " + warningColor
+            "Primary: " + colorDesign.getPrimaryColor(),
+            "Secondary: " + colorDesign.getSecondaryColor(),
+            "Neutral: " + colorDesign.getNeutralColor(),
+            "Warning: " + colorDesign.getWarningColor()
         }, 2);
         //Global Messages
+        FileConfiguration messagesConfig = CustomPlugin.pluginConfig;
         CustomPlugin.instance.debug("Loading basic messages...", 3);
         messageSeparator = translateColors(messagesConfig.getString("messages.messageSeparator"));
         pluginPrefix = translateColors(messagesConfig.getString("messages.messagePrefix"));
@@ -97,23 +70,25 @@ public abstract class BasicMessageManager implements MessageManager {
 
     public abstract void postSetup();
 
-    protected static boolean isValidColor(char c) {
+    @Override
+    public boolean isValidColor(char c) {
         return c == '1' || c == '2' || c == '3' || c == '4';
     }
 
-    public static String getColor(int i) {
+    @Override
+    public char getColor(int i) {
         CustomPlugin.instance.debug("Getting color for number " + i + "...");
         switch (i) {
             case 1:
-                return primaryColor;
+                return colorDesign.getPrimaryColor();
             case 2:
-                return secondaryColor;
+                return colorDesign.getSecondaryColor();
             case 3:
-                return neutralColor;
+                return colorDesign.getNeutralColor();
             case 4:
-                return warningColor;
+                return colorDesign.getWarningColor();
             default:
-                return null;
+                throw new IllegalArgumentException("Color identifier must be between 1 and 4");
         }
     }
 
@@ -128,14 +103,9 @@ public abstract class BasicMessageManager implements MessageManager {
              */
             if (b[i] == '$' && isValidColor(b[i + 1])) {
                 CustomPlugin.instance.debug("Character " + b[i] + " and " + b[i + 1] + " are replacable!");
-                String s = getColor(Character.getNumericValue(b[i + 1]));
-                if (s != null) {
-                    b[i] = ChatColor.COLOR_CHAR;
-                    b[i + 1] = s.charAt(0);
-                    CustomPlugin.instance.debug("Current status: " + Arrays.toString(b));
-                } else {
-                    CustomPlugin.instance.debug("Could not find color for " + b[i] + b[i + 1] + "@ " + input + "! Are you sure you configured everything correctly?", 4);
-                }
+                b[i] = ChatColor.COLOR_CHAR;
+                b[i + 1] = getColor(Character.getNumericValue(b[i + 1]));
+                CustomPlugin.instance.debug("Current status: " + Arrays.toString(b));
             }
         }
         return ChatColor.translateAlternateColorCodes(colorChar, new String(b));

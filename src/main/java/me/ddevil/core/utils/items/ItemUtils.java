@@ -18,10 +18,16 @@ package me.ddevil.core.utils.items;
 
 import me.ddevil.core.exceptions.ItemConversionException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import me.ddevil.core.CustomPlugin;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -79,7 +85,7 @@ public class ItemUtils {
                     itemName,
                     itemLore);
         } catch (Exception e) {
-            throw new IllegalArgumentException("Configuration Section " + itemSection.getCurrentPath() + " is baddly formated!");
+            throw new IllegalArgumentException("Configuration Section " + itemSection.getCurrentPath() + " is baddly formated! " + e.getCause().toString());
         }
     }
 
@@ -271,6 +277,44 @@ public class ItemUtils {
         itemMeta.setLore(lore);
         i.setItemMeta(itemMeta);
         return i;
+    }
+
+    //Use this to retrieve the item back
+    private static final Class ITEM_META_DESERIALIZATOR = CustomPlugin.getOBCClass("inventory.CraftMetaItem").getClasses()[0];
+    private static final Method DESERIALIZE = getDeserialize();
+
+    public static Method getDeserialize() {
+
+        try {
+            return ITEM_META_DESERIALIZATOR.getMethod("deserialize", new Class[]{Map.class});
+        } catch (NoSuchMethodException | SecurityException ex) {
+            return null;
+        }
+    }
+
+    public static ItemStack deserialize(Map<String, Object> s) {
+        ItemStack i = ItemStack.deserialize(s);
+        if (s.containsKey("meta")) {
+            try {
+                //  org.bukkit.craftbukkit.v1_8_R3.CraftMetaItem$SerializableMeta
+                //  CraftMetaItem.SerializableMeta.deserialize(Map<String, Object>)
+                if (ITEM_META_DESERIALIZATOR != null) {
+                    ItemMeta im = (ItemMeta) DESERIALIZE.invoke(i, s.get("meta"));
+                    i.setItemMeta(im);
+                }
+            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                CustomPlugin.instance.printException("There was a reflection problem while parsing meta " + s.toString(), e);
+            }
+        }
+        return i;
+    }
+
+    public static Map<String, Object> itemToMap(ItemStack item) {
+        HashMap<String, Object> itemDocument = new HashMap(item.serialize());
+        if (item.hasItemMeta()) {
+            itemDocument.put("meta", new HashMap(item.getItemMeta().serialize()));
+        }
+        return itemDocument;
     }
 }
 

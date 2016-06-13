@@ -16,6 +16,7 @@
  */
 package me.ddevil.core.utils;
 
+import java.util.Random;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -40,6 +41,12 @@ public class PotionUtils {
         } catch (Exception e) {
             throw new PotionParseException(s, e);
         }
+    }
+
+    public static PotionEffect random() {
+        Random r = new Random();
+        PotionEffectType[] types = PotionEffectType.values();
+        return new PotionEffect(types[r.nextInt(types.length - 1)], r.nextInt(5), r.nextInt(5));
     }
 
     public static class PotionParseException extends Exception {

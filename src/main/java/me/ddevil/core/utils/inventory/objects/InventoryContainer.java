@@ -12,26 +12,27 @@ import me.ddevil.core.utils.inventory.objects.interfaces.ClickableInventoryObjec
 /**
  *
  * @author HP
+ * @param <T>
  */
-public interface InventoryContainer extends InventoryObject, ClickableInventoryObject {
+public interface InventoryContainer<T extends InventoryObject> extends InventoryObject, ClickableInventoryObject {
 
     public void setItem(int slot, ItemStack item);
 
     public void addItem(ItemStack item);
 
-    public void setObject(int slot, InventoryObject item);
+    public void setObject(int slot, T item);
 
-    public void addObject(InventoryObject item);
+    public void addObject(T item);
 
     public boolean containsSlot(int slot);
 
     public boolean canPlaceIn(int slot);
 
-    public void removeItem(int slot);
+    public void removeObject(int slot);
 
     public void clear();
 
-    public Map<Integer, InventoryObject> getInventoryObjects();
+    public Map<Integer, T> getInventoryObjects();
 
     public int getSize();
 }

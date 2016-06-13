@@ -18,6 +18,7 @@ package me.ddevil.core.chat;
 
 import java.util.List;
 import me.ddevil.core.CustomPlugin;
+import me.ddevil.core.Manager;
 import org.bukkit.entity.Player;
 
 /**
@@ -27,8 +28,8 @@ import org.bukkit.entity.Player;
 public abstract class BasicChatManager implements ChatManager {
 
     @Override
-    public void sendMessage(Player p, String string) {
-        p.sendMessage(CustomPlugin.messageManager.getPluginPrefix() + CustomPlugin.messageManager.getMessageSeparator() + CustomPlugin.messageManager.translateAll(string));
+    public Manager setup() {
+        return this;
     }
 
     @Override
