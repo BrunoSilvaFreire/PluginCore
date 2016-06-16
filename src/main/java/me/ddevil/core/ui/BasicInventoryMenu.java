@@ -3,18 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package me.ddevil.core.utils.inventory;
+package me.ddevil.core.ui;
 
 import java.util.HashMap;
 import me.ddevil.core.CustomPlugin;
 import me.ddevil.core.events.inventory.InventoryObjectClickEvent;
+import me.ddevil.core.utils.inventory.InventoryUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
-import me.ddevil.core.utils.inventory.objects.InventoryObject;
-import me.ddevil.core.utils.inventory.objects.interfaces.ClickableInventoryObject;
+import me.ddevil.core.ui.objects.InventoryObject;
+import me.ddevil.core.ui.objects.interfaces.ClickableInventoryObject;
 
 /**
  *

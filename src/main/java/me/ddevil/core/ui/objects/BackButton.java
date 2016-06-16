@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package me.ddevil.core.utils.inventory.objects;
+package me.ddevil.core.ui.objects;
 
 import me.ddevil.core.events.inventory.InventoryObjectClickEvent;
-import me.ddevil.core.utils.inventory.objects.interfaces.InventoryObjectClickListener;
-import me.ddevil.core.utils.inventory.BasicInventoryMenu;
+import me.ddevil.core.ui.objects.interfaces.InventoryObjectClickListener;
+import me.ddevil.core.ui.BasicInventoryMenu;
 import org.bukkit.inventory.ItemStack;
 
 /**

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package me.ddevil.core.utils.inventory;
+package me.ddevil.core.ui;
 
 import me.ddevil.core.events.inventory.InventoryObjectClickEvent;
 import org.bukkit.block.Block;

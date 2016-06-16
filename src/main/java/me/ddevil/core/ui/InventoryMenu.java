@@ -3,14 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package me.ddevil.core.utils.inventory;
+package me.ddevil.core.ui;
 
 import java.util.Map;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
-import me.ddevil.core.utils.inventory.objects.InventoryObject;
+import me.ddevil.core.ui.objects.InventoryObject;
 
 /**
  *

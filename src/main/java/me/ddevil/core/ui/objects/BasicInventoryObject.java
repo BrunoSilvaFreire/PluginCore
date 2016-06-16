@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package me.ddevil.core.utils.inventory.objects;
+package me.ddevil.core.ui.objects;
 
 import java.util.List;
-import me.ddevil.core.utils.inventory.BasicInventoryMenu;
+
 import org.bukkit.inventory.ItemStack;
-import me.ddevil.core.utils.inventory.InventoryMenu;
+import me.ddevil.core.ui.InventoryMenu;
 
 /**
  *

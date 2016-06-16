@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package me.ddevil.core.utils.inventory.objects;
+package me.ddevil.core.ui.objects;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,11 +12,11 @@ import java.util.Map;
 import me.ddevil.core.CustomPlugin;
 import me.ddevil.core.events.inventory.InventoryObjectClickEvent;
 import me.ddevil.core.utils.inventory.InventoryUtils;
-import me.ddevil.core.utils.inventory.objects.interfaces.InventoryObjectClickListener;
+import me.ddevil.core.ui.objects.interfaces.InventoryObjectClickListener;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import me.ddevil.core.utils.inventory.InventoryMenu;
-import me.ddevil.core.utils.inventory.objects.interfaces.ClickableInventoryObject;
+import me.ddevil.core.ui.InventoryMenu;
+import me.ddevil.core.ui.objects.interfaces.ClickableInventoryObject;
 import me.ddevil.core.utils.items.ItemUtils;
 
 /**
