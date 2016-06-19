@@ -322,6 +322,7 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
     }
 
     //</editor-fold >
+
     public void reload(Player p) {
         chatManager.sendMessage(p, "Reloading...");
         long start = System.currentTimeMillis();
@@ -333,7 +334,7 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
 
     public static void registerListener(Listener l) {
         Bukkit.getPluginManager().registerEvents(l, instance);
-        instance.debug("Listener " + l.getClass().getSimpleName() + "@" + l.hashCode() + " registered.", DebugLevel.NO_BIG_DEAL);
+        instance.debug("Listener " + l.toString() + " registered.", DebugLevel.NO_BIG_DEAL);
     }
 
     public static void unregisterListener(Listener l) {

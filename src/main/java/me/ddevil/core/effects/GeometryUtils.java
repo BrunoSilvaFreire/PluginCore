@@ -11,9 +11,6 @@ import java.util.List;
  * Created by BRUNO II on 16/06/2016.
  */
 public class GeometryUtils {
-    public static void getLine(World world, Vector pos1, Vector pos2, GeometryResolution resolution, ParticleEffect effect) {
-    }
-
     public static List<Location> getLine(World world, Vector pos1, Vector pos2, GeometryResolution resolution) {
         return getLine(world, pos1, pos2, resolution.getResolution());
     }
