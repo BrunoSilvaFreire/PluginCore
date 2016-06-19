@@ -6,7 +6,7 @@
 package me.ddevil.core.ui.objects;
 
 import me.ddevil.core.events.inventory.InventoryObjectClickEvent;
-import me.ddevil.core.ui.BasicInventoryMenu;
+import me.ddevil.core.ui.menus.BasicInventoryMenu;
 import me.ddevil.core.ui.objects.interfaces.InventoryObjectClickListener;
 import org.bukkit.inventory.ItemStack;
 

@@ -8,14 +8,18 @@ package me.ddevil.core.ui.objects;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import me.ddevil.core.CustomPlugin;
-import me.ddevil.core.ui.InventoryMenu;
+import me.ddevil.core.events.inventory.InventoryObjectClickEvent;
+import me.ddevil.core.ui.menus.InventoryMenu;
+import me.ddevil.core.ui.objects.interfaces.ClickableInventoryObject;
+import me.ddevil.core.ui.objects.interfaces.InventoryObject;
+import me.ddevil.core.ui.objects.interfaces.InventoryObjectClickListener;
 import me.ddevil.core.utils.inventory.InventoryUtils;
 import me.ddevil.core.utils.items.ItemUtils;
 import org.bukkit.inventory.ItemStack;
 
 /**
- *
  * @author BRUNO II
  */
 public class ScrollableInventoryContainer extends BasicInventoryContainer {
@@ -26,14 +30,43 @@ public class ScrollableInventoryContainer extends BasicInventoryContainer {
     private final PageScroller previous;
     private int currentPageIndex = 0;
 
+    private class ScrollableContainerClickHandler implements InventoryObjectClickListener {
+
+        @Override
+        public void onInteract(InventoryObjectClickEvent e) {
+            int clickedSlot = e.getClickedSlot();
+            if (inventoryObjects.containsKey(clickedSlot)) {
+                InventoryObject obj = inventoryObjects.get(clickedSlot);
+                if (obj instanceof ClickableInventoryObject) {
+                    ClickableInventoryObject c = (ClickableInventoryObject) obj;
+                    c.getInteractListener().onInteract(e);
+                }
+            } else if (reservedSlots.contains(clickedSlot)) {
+                if (e.getObject().equals(next)) {
+                    goToPage(PageScroller.ScrollDirection.NEXT);
+                } else if (e.getObject().equals(previous)) {
+                    goToPage(PageScroller.ScrollDirection.PREVIOUS);
+                }
+            }
+        }
+    }
+
     public ScrollableInventoryContainer(InventoryMenu menu, int pos1, int pos2) {
-        super(menu, pos1, pos2 - InventoryUtils.getSquareLength(pos1, pos2));
+        super(menu, pos1, pos2 - InventoryUtils.getSquareLength(pos1, pos2), false);
+        this.listener = new ScrollableContainerClickHandler();
         this.next = new PageScroller(this, PageScroller.ScrollDirection.NEXT);
         this.previous = new PageScroller(this, PageScroller.ScrollDirection.PREVIOUS);
         this.reservedSlots = new ArrayList();
         for (int i = getLeftBottomSlot(); i < getRightBottomSlot(); i++) {
             reservedSlots.add(i);
         }
+    }
+
+    @Override
+    public List<Integer> getMultiSlots() {
+        List<Integer> list = super.getMultiSlots();
+        list.addAll(reservedSlots);
+        return list;
     }
 
     private int getLeftBottomSlot() {

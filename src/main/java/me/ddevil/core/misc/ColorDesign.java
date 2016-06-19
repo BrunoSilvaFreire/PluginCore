@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package me.ddevil.core.chat;
+package me.ddevil.core.misc;
 
 /**
  *
@@ -12,6 +12,9 @@ package me.ddevil.core.chat;
 public class ColorDesign {
 
     public static final ColorDesign DEFAULT_COLOR_DESIGN = new ColorDesign('b', '3', '7', 'c');
+    public static final char REPLACE_COLOR_CHAR = '&';
+
+    //Color char
 
     public final char primaryColor;
     public final char secondaryColor;

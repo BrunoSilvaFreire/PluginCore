@@ -21,7 +21,8 @@ import java.util.Arrays;
 import java.util.List;
 import me.ddevil.core.CustomPlugin;
 import me.ddevil.core.CustomPlugin.DebugLevel;
-import me.ddevil.core.Manager;
+import me.ddevil.core.misc.Manager;
+import me.ddevil.core.misc.ColorDesign;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -36,8 +37,6 @@ public abstract class BasicMessageManager implements MessageManager {
     public static String pluginPrefix;
     public static String header;
     public static String messageSeparator;
-    //Color char
-    private static final char colorChar = '&';
     //Colors
     private ColorDesign colorDesign;
 
@@ -106,7 +105,7 @@ public abstract class BasicMessageManager implements MessageManager {
                 CustomPlugin.instance.debug("Current status: " + Arrays.toString(b));
             }
         }
-        return ChatColor.translateAlternateColorCodes(colorChar, new String(b));
+        return ChatColor.translateAlternateColorCodes(ColorDesign.REPLACE_COLOR_CHAR, new String(b));
     }
 
     @Override

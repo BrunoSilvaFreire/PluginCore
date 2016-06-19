@@ -17,6 +17,7 @@
 package me.ddevil.core.chat;
 
 import me.ddevil.core.CustomPlugin;
+import me.ddevil.core.misc.ColorDesign;
 import org.bukkit.entity.Player;
 
 /**

@@ -6,7 +6,7 @@
 package me.ddevil.core.ui.objects;
 
 import org.bukkit.inventory.ItemStack;
-import me.ddevil.core.ui.InventoryMenu;
+import me.ddevil.core.ui.menus.InventoryMenu;
 
 /**
  *

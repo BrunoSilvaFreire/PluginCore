@@ -17,7 +17,7 @@
 package me.ddevil.core.chat;
 
 import java.util.List;
-import me.ddevil.core.Manager;
+import me.ddevil.core.misc.Manager;
 import org.bukkit.entity.Player;
 
 /**

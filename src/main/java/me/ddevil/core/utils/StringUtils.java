@@ -44,7 +44,7 @@ public class StringUtils {
         ChatColor lastColor = null;
         for (int i = 0; i < msg.length(); i++) {
             char c = msg.charAt(i);
-            if (c == '§') {
+            if (c == ChatColor.COLOR_CHAR) {
                 ChatColor cor = ChatColor.getByChar(msg.charAt(i + 1));
                 if (cor != null) {
                     if (cor.isColor()) {

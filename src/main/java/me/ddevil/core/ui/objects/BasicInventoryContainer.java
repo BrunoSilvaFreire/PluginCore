@@ -9,24 +9,72 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import me.ddevil.core.CustomPlugin;
 import me.ddevil.core.events.inventory.InventoryObjectClickEvent;
+import me.ddevil.core.ui.objects.interfaces.InventoryContainer;
+import me.ddevil.core.ui.objects.interfaces.InventoryObject;
 import me.ddevil.core.utils.inventory.InventoryUtils;
 import me.ddevil.core.ui.objects.interfaces.InventoryObjectClickListener;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import me.ddevil.core.ui.InventoryMenu;
+import me.ddevil.core.ui.menus.InventoryMenu;
 import me.ddevil.core.ui.objects.interfaces.ClickableInventoryObject;
 import me.ddevil.core.utils.items.ItemUtils;
 
 /**
- *
  * @author Selma
  */
 public class BasicInventoryContainer implements InventoryContainer {
 
-    protected int pos2;
-    protected int pos1;
+    protected final int pos2;
+    protected final int pos1;
+    protected final int size;
+    protected final int width;
+    protected final int height;
+    protected final Integer[] map;
+    protected final Inventory inventory;
+    protected final InventoryMenu menu;
+    protected final Map<Integer, InventoryObject> inventoryObjects = new HashMap();
+    protected InventoryObjectClickListener listener;
+
+    public BasicInventoryContainer(InventoryMenu menu, int pos1, int pos2) {
+        this.menu = menu;
+        this.inventory = menu.getBukkitInventory();
+        this.map = InventoryUtils.getSquare(pos1, pos2);
+        this.pos1 = map[0];
+        this.pos2 = map[map.length - 1];
+        this.size = map.length - 1;
+        this.listener = new ContainerClickHandler();
+        this.height = size / 9;
+        this.width = size % 9;
+    }
+
+    public BasicInventoryContainer(InventoryMenu menu, int pos1, int pos2, boolean createCustomListener) {
+        this.menu = menu;
+        this.inventory = menu.getBukkitInventory();
+        this.map = InventoryUtils.getSquare(pos1, pos2);
+        this.pos1 = map[0];
+        this.pos2 = map[map.length - 1];
+        this.size = map.length - 1;
+        if (createCustomListener) {
+            this.listener = new ContainerClickHandler();
+        }
+        this.height = size / 9;
+        this.width = size % 9;
+    }
+
+    public BasicInventoryContainer(InventoryMenu menu, int pos1, int pos2, InventoryObjectClickListener customListener) {
+        this.menu = menu;
+        this.inventory = menu.getBukkitInventory();
+        this.map = InventoryUtils.getSquare(pos1, pos2);
+        this.pos1 = map[0];
+        this.pos2 = map[map.length - 1];
+        this.size = map.length - 1;
+        this.listener = customListener;
+        this.height = size / 9;
+        this.width = size % 9;
+    }
 
     @Override
     public boolean hasItemStack() {
@@ -75,46 +123,13 @@ public class BasicInventoryContainer implements InventoryContainer {
             }
         }
     }
-    protected final int size;
-    protected final int width;
-    protected final int height;
-    protected final Integer[] map;
-    protected final Inventory inventory;
-    protected final InventoryMenu menu;
-    protected final Map<Integer, InventoryObject> inventoryObjects = new HashMap();
-    protected InventoryObjectClickListener listener;
 
-    public BasicInventoryContainer(InventoryMenu menu, int pos1, int pos2) {
-        this.menu = menu;
-        this.inventory = menu.getBukkitInventory();
-        this.map = InventoryUtils.getSquare(pos1, pos2);
-        this.pos1 = map[0];
-        this.pos2 = map[map.length - 1];
-        this.size = map.length - 1;
-        this.listener = new ContainerClickHandler();
-        this.height = size / 9;
-        this.width = size % 9;
-    }
-
-    public BasicInventoryContainer(InventoryMenu menu, int pos1, int pos2, InventoryObjectClickListener customListener) {
-        int containerSize = 0;
-        this.menu = menu;
-        this.inventory = menu.getBukkitInventory();
-        this.map = InventoryUtils.getSquare(pos1, pos2);
-        for (int pos : map) {
-            if (inventory.getItem(pos) != null) {
-                containerSize++;
-            }
-        }
-        this.size = containerSize;
-        this.listener = customListener;
-        this.height = size / 9;
-        this.width = size % 9;
-    }
 
     @Override
     public int getSize() {
+
         return size;
+
     }
 
     @Override

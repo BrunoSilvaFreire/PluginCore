@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package me.ddevil.core.ui;
+package me.ddevil.core.ui.menus;
 
 import java.util.HashMap;
+
 import me.ddevil.core.CustomPlugin;
 import me.ddevil.core.events.inventory.InventoryObjectClickEvent;
 import me.ddevil.core.utils.inventory.InventoryUtils;
@@ -14,11 +15,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
-import me.ddevil.core.ui.objects.InventoryObject;
+import me.ddevil.core.ui.objects.interfaces.InventoryObject;
 import me.ddevil.core.ui.objects.interfaces.ClickableInventoryObject;
 
 /**
- *
  * @author Selma
  */
 public abstract class BasicInventoryMenu implements InventoryMenu {
@@ -107,23 +107,20 @@ public abstract class BasicInventoryMenu implements InventoryMenu {
 
     @EventHandler
     public void onClick(InventoryClickEvent e) {
-        Inventory clickedInventory = e.getClickedInventory();
+        Inventory clickedInventory = e.getInventory();
         if (clickedInventory != null) {
             if (mainInventory != null) {
                 if (clickedInventory.equals(mainInventory)) {
                     e.setCancelled(true);
-                    ItemStack item = e.getCurrentItem();
-                    if (item != null) {
-                        int slot = e.getSlot();
-                        if (objects.containsKey(slot)) {
-                            InventoryObjectClickEvent.InteractionType type;
-                            if (e.isLeftClick()) {
-                                type = InventoryObjectClickEvent.InteractionType.INVENTORY_CLICK_LEFT;
-                            } else {
-                                type = InventoryObjectClickEvent.InteractionType.INVENTORY_CLICK_RIGHT;
-                            }
-                            new InventoryObjectClickEvent(objects.get(slot), slot, (Player) e.getWhoClicked(), type, null, e.getCursor()).call();
+                    int slot = e.getSlot();
+                    if (objects.containsKey(slot)) {
+                        InventoryObjectClickEvent.InteractionType type;
+                        if (e.isLeftClick()) {
+                            type = InventoryObjectClickEvent.InteractionType.INVENTORY_CLICK_LEFT;
+                        } else {
+                            type = InventoryObjectClickEvent.InteractionType.INVENTORY_CLICK_RIGHT;
                         }
+                        new InventoryObjectClickEvent(objects.get(slot), slot, (Player) e.getWhoClicked(), type, null, e.getCursor()).call();
                     }
                 }
             }

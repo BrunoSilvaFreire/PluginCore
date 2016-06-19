@@ -17,17 +17,19 @@
 package me.ddevil.core;
 
 import me.ddevil.core.chat.MessageManager;
+
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import me.ddevil.core.chat.ChatManager;
-import me.ddevil.core.chat.ColorDesign;
+import me.ddevil.core.effects.GeometryResolution;
+import me.ddevil.core.effects.GeometryUtils;
+import me.ddevil.core.misc.ColorDesign;
 import me.ddevil.core.chat.PluginChatManager;
 import me.ddevil.core.chat.PluginMessageManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -38,6 +40,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.Vector;
 
 public abstract class CustomPlugin extends JavaPlugin implements Listener {
 
@@ -56,16 +59,6 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
         return commandMap;
     }
 
-    public static void main(String[] args) {
-        try {
-            System.out.println("Oh noes, you are supposed to place this file in /{your server folder}/plugins");
-            Thread.sleep(5000);
-            System.out.println("I mean... come on man, are you even trying?");
-            System.in.read();
-        } catch (InterruptedException | IOException ex) {
-            Logger.getLogger(CustomPlugin.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
 
     @Override
     public final void onEnable() {
@@ -106,6 +99,7 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
         }
         doSetup();
     }
+
     //</editor-fold>
     //<editor-fold desc="Files/Configs variables" defaultstate="collapsed">
     public static File pluginFolder;
@@ -185,6 +179,7 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
 
     //</editor-fold>
     //<editor-fold desc="Debugging" defaultstate="collapsed">
+
     /**
      * How much of a fuck to give when something goes wrong, they should be self
      * explanatory
@@ -257,9 +252,8 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
      * 3 = Loading/Unloading (Loads, Unloads, Reloads, Configs, etc)
      * 4 = Ultra mega power blaster master requires messages </pre>
      *
-     * @param msg The message to be debuged
+     * @param msg      The message to be debuged
      * @param priority The message's priority
-     *
      */
     public void debug(String[] msg, DebugLevel priority) {
         for (String m : msg) {
@@ -293,8 +287,7 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
      * 3 = Loading/Unloading (Loads, Unloads, Reloads, Configs, etc)
      * 4 = Ultra mega power blaster master requires messages </pre>
      *
-     *
-     * @param msg The message to be debuged
+     * @param msg   The message to be debuged
      * @param level The message's priority
      */
     public void debug(String msg, DebugLevel level) {
@@ -307,7 +300,7 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
     /**
      * Forces the debugging of the given messages if force is true<br>
      *
-     * @param msg The message to be debuged
+     * @param msg   The message to be debuged
      * @param force Whether to force the display of the messages
      */
     public void debug(String msg, boolean force) {
