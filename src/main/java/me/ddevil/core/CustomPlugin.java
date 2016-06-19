@@ -29,6 +29,7 @@ import me.ddevil.core.chat.PluginChatManager;
 import me.ddevil.core.chat.PluginMessageManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
@@ -45,13 +46,12 @@ import org.bukkit.util.Vector;
 public abstract class CustomPlugin extends JavaPlugin implements Listener {
 
     //General info
-    public static CustomPlugin instance;
-    public static ColorDesign colorDesign;
-    public static ChatManager chatManager;
-    public static MessageManager messageManager;
+    public ColorDesign colorDesign;
+    public ChatManager chatManager;
+    public MessageManager messageManager;
 
     //<editor-fold desc="Techy and ugly stuff" defaultstate="collapsed">
-    protected static CommandMap commandMap;
+    protected  CommandMap commandMap;
     public int minimumDebugPriority = 0;
     private boolean allowBroadcastdebug;
 
@@ -62,7 +62,6 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
 
     @Override
     public final void onEnable() {
-        instance = this;
         pluginFolder = getDataFolder();
         if (!pluginFolder.exists()) {
             debug("Plugin folder not found! Making one...", DebugLevel.SHOULDNT_HAPPEN_BUT_WE_CAN_HANDLE_IT);
@@ -102,19 +101,19 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
 
     //</editor-fold>
     //<editor-fold desc="Files/Configs variables" defaultstate="collapsed">
-    public static File pluginFolder;
-    public static File pluginConfigFile;
-    public static FileConfiguration pluginConfig;
+    public  File pluginFolder;
+    public  File pluginConfigFile;
+    public  FileConfiguration pluginConfig;
     //</editor-fold>
     //<editor-fold desc="NMS/OBC Reflection" defaultstate="collapsed">
 
-    public static String getVersion() {
+    public  String getVersion() {
         String name = Bukkit.getServer().getClass().getPackage().getName();
         String version = name.substring(name.lastIndexOf('.') + 1) + ".";
         return version;
     }
 
-    public static Class<?> getNMSClass(String className) {
+    public  Class<?> getNMSClass(String className) {
         String fullName = "net.minecraft.server." + getVersion() + className;
         Class<?> clazz = null;
         try {
@@ -125,7 +124,7 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
         return clazz;
     }
 
-    public static Class<?> getOBCClass(String className) {
+    public  Class<?> getOBCClass(String className) {
         String fullName = "org.bukkit.craftbukkit." + getVersion() + className;
         Class<?> clazz = null;
         try {
@@ -150,19 +149,11 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
 
     //</editor-fold>
     //<editor-fold desc="Commands and permissions" defaultstate="collapsed">
-    public static void registerCommand(Command cmd) {
-        CustomPlugin.registerCommand(instance, cmd);
+    public  void registerCommand(Command cmd) {
+        commandMap.register(getPluginName(), cmd);
     }
 
-    public static void registerCommand(Plugin pl, Command cmd) {
-        CustomPlugin.registerCommand(pl.getName(), cmd);
-    }
-
-    private static void registerCommand(String pl, Command cmd) {
-        commandMap.register(pl, cmd);
-    }
-
-    public static boolean isPermissionRegistered(String permission) {
+    public  boolean isPermissionRegistered(String permission) {
         for (Permission p : Bukkit.getPluginManager().getPermissions()) {
             if (p.getName().equalsIgnoreCase(permission)) {
                 return true;
@@ -171,7 +162,7 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
         return false;
     }
 
-    public static void registerPermission(String permission) {
+    public  void registerPermission(String permission) {
         if (!isPermissionRegistered(permission)) {
             Bukkit.getPluginManager().addPermission(new Permission(permission));
         }
@@ -332,12 +323,12 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
         chatManager.sendMessage(p, "Reloaded! Took " + (time / 1000) + "seconds! " + colorDesign.secondaryColor + "(" + time + "ms)");
     }
 
-    public static void registerListener(Listener l) {
-        Bukkit.getPluginManager().registerEvents(l, instance);
-        instance.debug("Listener " + l.toString() + " registered.", DebugLevel.NO_BIG_DEAL);
+    public void registerListener(Listener l) {
+        Bukkit.getPluginManager().registerEvents(l, this);
+        debug("Listener " + l.toString() + " registered.", DebugLevel.NO_BIG_DEAL);
     }
 
-    public static void unregisterListener(Listener l) {
+    public void unregisterListener(Listener l) {
         HandlerList.unregisterAll(l);
     }
 
