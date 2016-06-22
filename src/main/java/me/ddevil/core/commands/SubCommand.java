@@ -17,6 +17,7 @@
 package me.ddevil.core.commands;
 
 import java.util.List;
+
 import me.ddevil.core.CustomPlugin;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -27,16 +28,19 @@ public abstract class SubCommand {
     public final CustomCommand command;
     protected final String name;
     protected List<String> aliases;
+    protected final CustomPlugin plugin;
 
-    public SubCommand(String name, CustomCommand permission) {
+    public SubCommand(String name, CustomCommand permission, CustomPlugin plugin) {
         this.name = name;
         this.command = permission;
+        this.plugin = plugin;
     }
 
-    public SubCommand(String name, CustomCommand command, List<String> aliases) {
+    public SubCommand(String name, CustomCommand command, List<String> aliases, CustomPlugin plugin) {
         this.aliases = aliases;
         this.command = command;
         this.name = name;
+        this.plugin = plugin;
     }
 
     public List<String> getUsageMessages() {
@@ -66,10 +70,6 @@ public abstract class SubCommand {
 
     public boolean checkPerm(Player p) {
         return p.hasPermission(command.permission);
-    }
-
-    public void sendUsage(Player p) {
-        CustomPlugin.chatManager.sendMessage(p, usageMessages);
     }
 
     public void setAliases(List<String> aliases) {

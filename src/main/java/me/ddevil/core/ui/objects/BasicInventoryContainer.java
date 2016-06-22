@@ -36,9 +36,11 @@ public class BasicInventoryContainer implements InventoryContainer {
     protected final Inventory inventory;
     protected final InventoryMenu menu;
     protected final Map<Integer, InventoryObject> inventoryObjects = new HashMap();
+    protected final CustomPlugin plugin;
     protected InventoryObjectClickListener listener;
 
-    public BasicInventoryContainer(InventoryMenu menu, int pos1, int pos2) {
+    public BasicInventoryContainer(CustomPlugin plugin, InventoryMenu menu, int pos1, int pos2) {
+        this.plugin = plugin;
         this.menu = menu;
         this.inventory = menu.getBukkitInventory();
         this.map = InventoryUtils.getSquare(pos1, pos2);
@@ -50,7 +52,8 @@ public class BasicInventoryContainer implements InventoryContainer {
         this.width = size % 9;
     }
 
-    public BasicInventoryContainer(InventoryMenu menu, int pos1, int pos2, boolean createCustomListener) {
+    public BasicInventoryContainer(CustomPlugin plugin, InventoryMenu menu, int pos1, int pos2, boolean createCustomListener) {
+        this.plugin = plugin;
         this.menu = menu;
         this.inventory = menu.getBukkitInventory();
         this.map = InventoryUtils.getSquare(pos1, pos2);
@@ -64,7 +67,8 @@ public class BasicInventoryContainer implements InventoryContainer {
         this.width = size % 9;
     }
 
-    public BasicInventoryContainer(InventoryMenu menu, int pos1, int pos2, InventoryObjectClickListener customListener) {
+    public BasicInventoryContainer(CustomPlugin plugin, InventoryMenu menu, int pos1, int pos2, InventoryObjectClickListener customListener) {
+        this.plugin = plugin;
         this.menu = menu;
         this.inventory = menu.getBukkitInventory();
         this.map = InventoryUtils.getSquare(pos1, pos2);
@@ -101,10 +105,10 @@ public class BasicInventoryContainer implements InventoryContainer {
     public void fill(ItemStack item) {
         for (int slot = 0; slot < map.length; slot++) {
             if (canPlaceIn(slot)) {
-                CustomPlugin.instance.debug("Placing item " + ItemUtils.toString(item) + " in slot " + slot);
+                plugin.debug("Placing item " + ItemUtils.toString(item) + " in slot " + slot);
                 setItem(slot, item);
             } else {
-                CustomPlugin.instance.debug("Could not place item " + ItemUtils.toString(item) + " in slot " + slot + " while filling");
+                plugin.debug("Could not place item " + ItemUtils.toString(item) + " in slot " + slot + " while filling");
             }
         }
     }

@@ -51,8 +51,8 @@ public class ScrollableInventoryContainer extends BasicInventoryContainer {
         }
     }
 
-    public ScrollableInventoryContainer(InventoryMenu menu, int pos1, int pos2) {
-        super(menu, pos1, pos2 - InventoryUtils.getSquareLength(pos1, pos2), false);
+    public ScrollableInventoryContainer(CustomPlugin plugin, InventoryMenu menu, int pos1, int pos2) {
+        super(plugin, menu, pos1, pos2 - InventoryUtils.getSquareLength(pos1, pos2), false);
         this.listener = new ScrollableContainerClickHandler();
         this.next = new PageScroller(this, PageScroller.ScrollDirection.NEXT);
         this.previous = new PageScroller(this, PageScroller.ScrollDirection.PREVIOUS);
@@ -91,10 +91,10 @@ public class ScrollableInventoryContainer extends BasicInventoryContainer {
     public void fill(ItemStack item) {
         for (int slot = 0; slot < getLastSlot(); slot++) {
             if (canPlaceIn(slot)) {
-                CustomPlugin.instance.debug("Placing item " + ItemUtils.toString(item) + " in slot " + slot);
+                plugin.debug("Placing item " + ItemUtils.toString(item) + " in slot " + slot);
                 setItem(slot, item);
             } else {
-                CustomPlugin.instance.debug("Could not place item " + ItemUtils.toString(item) + " in slot " + slot + " while filling");
+                plugin.debug("Could not place item " + ItemUtils.toString(item) + " in slot " + slot + " while filling");
             }
         }
     }

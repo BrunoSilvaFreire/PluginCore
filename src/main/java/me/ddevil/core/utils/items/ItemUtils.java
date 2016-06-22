@@ -16,7 +16,9 @@
  */
 package me.ddevil.core.utils.items;
 
+import me.ddevil.core.CustomPlugin;
 import me.ddevil.core.exceptions.ItemConversionException;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -26,7 +28,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import me.ddevil.core.CustomPlugin;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -37,20 +39,24 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 /**
- *
  * @author Selma
  */
 public class ItemUtils {
+    public static CustomPlugin plugin;
+
+    public void setup(CustomPlugin plugin) {
+        this.plugin = plugin;
+    }
 
     public static class Deserializer {
 
         /**
-         * Gets an item back from the Map created by {@link serialize()}
+         * Gets an item back from the Map created by {@link Deserializer#serialize(ItemStack)}
          *
          * @param map The map to deserialize from.
          * @return The deserialized item.
-         * @throws IllegalAccessException Things can go wrong.
-         * @throws IllegalArgumentException Things can go wrong.
+         * @throws IllegalAccessException    Things can go wrong.
+         * @throws IllegalArgumentException  Things can go wrong.
          * @throws InvocationTargetException Things can go wrong.
          */
         public static ItemStack deserialize(Map<String, Object> map) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
@@ -71,7 +77,7 @@ public class ItemUtils {
         }
 
         /**
-         * Serializes an ItemStack and it's ItemMeta, use {@link deserialize()}
+         * Serializes an ItemStack and it's ItemMeta, use {@link Deserializer#deserialize(Map)}
          * to get the item back.
          *
          * @param item Item to serialize
@@ -97,7 +103,6 @@ public class ItemUtils {
         }
 
         /**
-         *
          * @param className
          * @return
          */
@@ -111,6 +116,7 @@ public class ItemUtils {
             }
             return clazz;
         }
+
         private static final Class ITEM_META_DESERIALIZATOR = getOBCClass("inventory.CraftMetaItem").getClasses()[0];
         private static final Method DESERIALIZE = getDeserialize();
 
@@ -125,6 +131,7 @@ public class ItemUtils {
         // </editor-fold>
 
     }
+
     private static boolean glowRegistered = false;
 
     //geral
@@ -149,14 +156,14 @@ public class ItemUtils {
 
     public static ItemStack createItem(ConfigurationSection itemSection) throws IllegalArgumentException {
         try {
-            CustomPlugin.instance.debug("Loading item " + itemSection.getName() + " from config.");
+            plugin.debug("Loading item " + itemSection.getName() + " from config.");
             String itemName = null;
             if (itemSection.contains("name")) {
-                itemName = CustomPlugin.messageManager.translateAll(itemSection.getString("name"));
+                itemName = plugin.messageManager.translateAll(itemSection.getString("name"));
             }
             List<String> itemLore = null;
             if (itemSection.contains("lore")) {
-                itemLore = CustomPlugin.messageManager.translateAll(itemSection.getStringList("lore"));
+                itemLore = plugin.messageManager.translateAll(itemSection.getStringList("lore"));
             }
             Material m = Material.valueOf(itemSection.getString("type"));
             byte data = ((Integer) itemSection.getInt("data")).byteValue();
@@ -304,7 +311,7 @@ public class ItemUtils {
                 try {
                     b = Byte.valueOf(materialanddata[1]);
                 } catch (NumberFormatException exception) {
-                    CustomPlugin.instance.debug(materialanddata[1] + " in " + input + "isn't a number! Setting byte to 0");
+                    plugin.debug(materialanddata[1] + " in " + input + "isn't a number! Setting byte to 0");
                     b = 0;
                 }
             } else {

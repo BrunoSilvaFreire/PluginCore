@@ -17,15 +17,21 @@
 package me.ddevil.core.chat;
 
 import java.util.List;
+
 import me.ddevil.core.misc.Manager;
+import org.bukkit.entity.Player;
 
 /**
- *
  * @author Selma
  */
 public interface MessageManager extends Manager {
 
     public boolean isValidColor(char c);
+
+    public void sendMessage(Player p, String message);
+
+
+    public void sendMessage(Player p, String... messages);
 
     public char getColor(int i);
 
@@ -42,6 +48,7 @@ public interface MessageManager extends Manager {
      * @return the message separator
      */
     public String getMessageSeparator();
+
 
     public String translateTags(String input);
 

@@ -18,6 +18,7 @@ package me.ddevil.core.commands;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import me.ddevil.core.CustomPlugin;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -25,32 +26,37 @@ import org.bukkit.entity.Player;
 
 public abstract class CustomCommand extends Command {
 
+    private final CustomPlugin plugin;
     protected List<String> usageMessages;
 
-    public CustomCommand(String name, String permission) {
+    public CustomCommand(CustomPlugin plugin, String name, String permission) {
         super(name);
-        CustomPlugin.registerPermission(permission);
+        this.plugin = plugin;
+        plugin.registerPermission(permission);
         this.permission = permission;
     }
 
-    public CustomCommand(String name, String permission, List<String> aliases) {
+    public CustomCommand(String name, String permission, List<String> aliases, CustomPlugin plugin) {
         super(name);
-        CustomPlugin.registerPermission(permission);
+        this.plugin = plugin;
+        plugin.registerPermission(permission);
         setAliases(aliases);
         this.permission = permission;
     }
 
-    public CustomCommand(String name, String permission, List<String> aliases, String description) {
+    public CustomCommand(String name, String permission, List<String> aliases, String description, CustomPlugin plugin) {
         super(name);
-        CustomPlugin.registerPermission(permission);
+        this.plugin = plugin;
+        this.plugin.registerPermission(permission);
         setAliases(aliases);
         setDescription(description);
         this.permission = permission;
     }
 
-    public CustomCommand(String name, String permission, List<String> aliases, String description, String usage) {
+    public CustomCommand(String name, String permission, List<String> aliases, String description, String usage, CustomPlugin plugin) {
         super(name);
-        CustomPlugin.registerPermission(permission);
+        this.plugin = plugin;
+        this.plugin.registerPermission(permission);
         setAliases(aliases);
         setDescription(description);
         setUsage(usage);
@@ -63,6 +69,7 @@ public abstract class CustomCommand extends Command {
     public boolean execute(CommandSender cs, String string, String[] strings) {
         return handleExecute(cs, strings);
     }
+
     private final ArrayList<SubCommand> subCommands = new ArrayList();
 
     public void addSubCommand(SubCommand cmd) {
@@ -91,12 +98,9 @@ public abstract class CustomCommand extends Command {
         return p.hasPermission(permission);
     }
 
-    public void sendUsage(Player p) {
-        CustomPlugin.chatManager.sendMessage(p, usageMessages);
-    }
 
     public void sendInvalidArguments(Player p, String msg) {
-        CustomPlugin.chatManager.sendMessage(p, "§cInvalid arguments! §7" + msg);
+        plugin.messageManager.sendMessage(p, "§cInvalid arguments! §7" + msg);
     }
 
     public abstract boolean handleExecute(CommandSender sender, String[] args);

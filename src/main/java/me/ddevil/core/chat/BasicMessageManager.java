@@ -19,12 +19,14 @@ package me.ddevil.core.chat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import me.ddevil.core.CustomPlugin;
-import me.ddevil.core.CustomPlugin.DebugLevel;
 import me.ddevil.core.misc.Manager;
 import me.ddevil.core.misc.ColorDesign;
+import me.ddevil.core.utils.DebugLevel;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 
 /**
  * REMEMBER TO INITIALIZE THE VARIABLES IN THIS!
@@ -38,29 +40,34 @@ public abstract class BasicMessageManager implements MessageManager {
     public static String header;
     public static String messageSeparator;
     //Colors
-    private ColorDesign colorDesign;
+    private final ColorDesign colorDesign;
+    private final CustomPlugin plugin;
+
+    public BasicMessageManager(CustomPlugin plugin) {
+        this.colorDesign = plugin.colorDesign;
+        this.plugin = plugin;
+    }
 
     @Override
     public Manager setup() {
         //Colors
-        CustomPlugin.instance.debug("Loading colors...", DebugLevel.NO_BIG_DEAL);
-        colorDesign = CustomPlugin.colorDesign;
-        CustomPlugin.instance.debug(new String[]{
-            "Colors set to:",
-            colorDesign.toString()
+        plugin.debug("Loading colors...", DebugLevel.NO_BIG_DEAL);
+        plugin.debug(new String[]{
+                "Colors set to:",
+                colorDesign.toString()
         }, DebugLevel.NO_BIG_DEAL);
         //Global Messages
-        FileConfiguration messagesConfig = CustomPlugin.pluginConfig;
-        CustomPlugin.instance.debug("Loading basic messages...", DebugLevel.NO_BIG_DEAL);
+        FileConfiguration messagesConfig = plugin.pluginConfig;
+        plugin.debug("Loading basic messages...", DebugLevel.NO_BIG_DEAL);
         messageSeparator = translateColors(messagesConfig.getString("messages.messageSeparator"));
         pluginPrefix = translateColors(messagesConfig.getString("messages.messagePrefix"));
         header = translateAll(messagesConfig.getString("messages.header"));
-        CustomPlugin.instance.debug("Messages loaded!", DebugLevel.NO_BIG_DEAL);
-        CustomPlugin.instance.debug(new String[]{
-            "Basic messages:",
-            "messageSeparator: " + messageSeparator,
-            "pluginPrefix: " + pluginPrefix,
-            "header: " + header}, DebugLevel.NO_BIG_DEAL);
+        plugin.debug("Messages loaded!", DebugLevel.NO_BIG_DEAL);
+        plugin.debug(new String[]{
+                "Basic messages:",
+                "messageSeparator: " + messageSeparator,
+                "pluginPrefix: " + pluginPrefix,
+                "header: " + header}, DebugLevel.NO_BIG_DEAL);
         postSetup();
         return this;
     }
@@ -74,7 +81,7 @@ public abstract class BasicMessageManager implements MessageManager {
 
     @Override
     public char getColor(int i) {
-        CustomPlugin.instance.debug("Getting color for number " + i + "...");
+        plugin.debug("Getting color for number " + i + "...");
         switch (i) {
             case 1:
                 return colorDesign.primaryColor;
@@ -91,7 +98,7 @@ public abstract class BasicMessageManager implements MessageManager {
 
     @Override
     public String translateColors(String input) {
-        CustomPlugin.instance.debug("Translating colors for message \"" + input + "\"");
+        plugin.debug("Translating colors for message \"" + input + "\"");
         char[] b = input.toCharArray();
         //Iterate
         for (int i = 0; i < b.length - 1; i++) {
@@ -99,10 +106,10 @@ public abstract class BasicMessageManager implements MessageManager {
              character is a valid color
              */
             if (b[i] == '$' && isValidColor(b[i + 1])) {
-                CustomPlugin.instance.debug("Character " + b[i] + " and " + b[i + 1] + " are replacable!");
+                plugin.debug("Character " + b[i] + " and " + b[i + 1] + " are replacable!");
                 b[i] = ChatColor.COLOR_CHAR;
                 b[i + 1] = getColor(Character.getNumericValue(b[i + 1]));
-                CustomPlugin.instance.debug("Current status: " + Arrays.toString(b));
+                plugin.debug("Current status: " + Arrays.toString(b));
             }
         }
         return ChatColor.translateAlternateColorCodes(ColorDesign.REPLACE_COLOR_CHAR, new String(b));
@@ -148,7 +155,20 @@ public abstract class BasicMessageManager implements MessageManager {
     }
 
     @Override
+    public void sendMessage(Player p, String... messages) {
+        for (String s : messages) {
+            sendMessage(p, s);
+        }
+    }
+
+    @Override
     public String getMessageSeparator() {
         return messageSeparator;
+    }
+    @Override
+    public String translateTags(String input) {
+        input = input.replace("%prefix%", pluginPrefix);
+        input = input.replace("%header%", header);
+        return input;
     }
 }

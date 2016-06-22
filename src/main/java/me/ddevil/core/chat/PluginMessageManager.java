@@ -1,24 +1,23 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package me.ddevil.core.chat;
 
+import me.ddevil.core.CustomPlugin;
+import org.bukkit.entity.Player;
+
 /**
- *
- * @author BRUNO II
+ * Created by BRUNO II on 21/06/2016.
  */
 public class PluginMessageManager extends BasicMessageManager {
+    public PluginMessageManager(CustomPlugin plugin) {
+        super(plugin);
+    }
 
     @Override
     public void postSetup() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
     }
 
     @Override
-    public String translateTags(String input) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void sendMessage(Player p, String message) {
+        p.sendMessage(getPluginPrefix() + getMessageSeparator() + translateAll(message));
     }
-
 }

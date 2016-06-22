@@ -17,20 +17,11 @@
 package me.ddevil.core;
 
 import me.ddevil.core.chat.MessageManager;
-
-import java.io.File;
-import java.lang.reflect.Field;
-
-import me.ddevil.core.chat.ChatManager;
-import me.ddevil.core.effects.GeometryResolution;
-import me.ddevil.core.effects.GeometryUtils;
-import me.ddevil.core.misc.ColorDesign;
-import me.ddevil.core.chat.PluginChatManager;
 import me.ddevil.core.chat.PluginMessageManager;
+import me.ddevil.core.misc.ColorDesign;
+import me.ddevil.core.utils.DebugLevel;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Effect;
-import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -39,19 +30,19 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.permissions.Permission;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.Vector;
+
+import java.io.File;
+import java.lang.reflect.Field;
 
 public abstract class CustomPlugin extends JavaPlugin implements Listener {
 
     //General info
     public ColorDesign colorDesign;
-    public ChatManager chatManager;
     public MessageManager messageManager;
 
     //<editor-fold desc="Techy and ugly stuff" defaultstate="collapsed">
-    protected  CommandMap commandMap;
+    protected CommandMap commandMap;
     public int minimumDebugPriority = 0;
     private boolean allowBroadcastdebug;
 
@@ -88,12 +79,8 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
             colorDesign = ColorDesign.DEFAULT_COLOR_DESIGN;
             debug("Plugin didn't specify any Color Design, loading default one...", DebugLevel.SHOULDNT_HAPPEN_BUT_WE_CAN_HANDLE_IT);
         }
-        if (chatManager == null) {
-            chatManager = (ChatManager) new PluginChatManager().setup();
-            debug("Plugin didn't specify any Chat Manager, loading default one...", DebugLevel.SHOULDNT_HAPPEN_BUT_WE_CAN_HANDLE_IT);
-        }
         if (messageManager == null) {
-            messageManager = (MessageManager) new PluginMessageManager().setup();
+            messageManager = (MessageManager) new PluginMessageManager(this).setup();
             debug("Plugin didn't specify any Message Manager, loading default one...", DebugLevel.SHOULDNT_HAPPEN_BUT_WE_CAN_HANDLE_IT);
         }
         doSetup();
@@ -101,19 +88,19 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
 
     //</editor-fold>
     //<editor-fold desc="Files/Configs variables" defaultstate="collapsed">
-    public  File pluginFolder;
-    public  File pluginConfigFile;
-    public  FileConfiguration pluginConfig;
+    public File pluginFolder;
+    public File pluginConfigFile;
+    public FileConfiguration pluginConfig;
     //</editor-fold>
     //<editor-fold desc="NMS/OBC Reflection" defaultstate="collapsed">
 
-    public  String getVersion() {
+    public String getVersion() {
         String name = Bukkit.getServer().getClass().getPackage().getName();
         String version = name.substring(name.lastIndexOf('.') + 1) + ".";
         return version;
     }
 
-    public  Class<?> getNMSClass(String className) {
+    public Class<?> getNMSClass(String className) {
         String fullName = "net.minecraft.server." + getVersion() + className;
         Class<?> clazz = null;
         try {
@@ -124,7 +111,7 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
         return clazz;
     }
 
-    public  Class<?> getOBCClass(String className) {
+    public Class<?> getOBCClass(String className) {
         String fullName = "org.bukkit.craftbukkit." + getVersion() + className;
         Class<?> clazz = null;
         try {
@@ -149,11 +136,11 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
 
     //</editor-fold>
     //<editor-fold desc="Commands and permissions" defaultstate="collapsed">
-    public  void registerCommand(Command cmd) {
+    public void registerCommand(Command cmd) {
         commandMap.register(getPluginName(), cmd);
     }
 
-    public  boolean isPermissionRegistered(String permission) {
+    public boolean isPermissionRegistered(String permission) {
         for (Permission p : Bukkit.getPluginManager().getPermissions()) {
             if (p.getName().equalsIgnoreCase(permission)) {
                 return true;
@@ -162,7 +149,7 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
         return false;
     }
 
-    public  void registerPermission(String permission) {
+    public void registerPermission(String permission) {
         if (!isPermissionRegistered(permission)) {
             Bukkit.getPluginManager().addPermission(new Permission(permission));
         }
@@ -171,18 +158,6 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
     //</editor-fold>
     //<editor-fold desc="Debugging" defaultstate="collapsed">
 
-    /**
-     * How much of a fuck to give when something goes wrong, they should be self
-     * explanatory
-     */
-    public enum DebugLevel {
-
-        MEH,
-        NO_BIG_DEAL,
-        SHOULDNT_HAPPEN_BUT_WE_CAN_HANDLE_IT,
-        OKAY_SOME_REAL_SHIT_HAPPENED,
-        FUCK_MAN_SOUND_THE_ALARMS
-    }
 
     public void broadcastDebug(String msg) {
         broadcastDebug(msg, DebugLevel.OKAY_SOME_REAL_SHIT_HAPPENED);
@@ -315,12 +290,12 @@ public abstract class CustomPlugin extends JavaPlugin implements Listener {
     //</editor-fold >
 
     public void reload(Player p) {
-        chatManager.sendMessage(p, "Reloading...");
+        messageManager.sendMessage(p, "Reloading...");
         long start = System.currentTimeMillis();
         doReload();
         long end = System.currentTimeMillis();
         long time = end - start;
-        chatManager.sendMessage(p, "Reloaded! Took " + (time / 1000) + "seconds! " + colorDesign.secondaryColor + "(" + time + "ms)");
+        messageManager.sendMessage(p, "Reloaded! Took " + (time / 1000) + "seconds! " + colorDesign.secondaryColor + "(" + time + "ms)");
     }
 
     public void registerListener(Listener l) {

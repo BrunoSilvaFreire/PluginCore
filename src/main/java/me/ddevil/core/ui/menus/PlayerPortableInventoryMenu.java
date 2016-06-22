@@ -5,6 +5,7 @@
  */
 package me.ddevil.core.ui.menus;
 
+import me.ddevil.core.CustomPlugin;
 import me.ddevil.core.events.inventory.InventoryObjectClickEvent;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -15,13 +16,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 /**
- *
  * @author murillofreire
  */
 public abstract class PlayerPortableInventoryMenu extends BasicInventoryMenu {
 
-    public PlayerPortableInventoryMenu(Player p) {
-        super(p.getInventory());
+    public PlayerPortableInventoryMenu(CustomPlugin plugin, Player p) {
+        super(plugin, p.getInventory());
     }
 
     @EventHandler

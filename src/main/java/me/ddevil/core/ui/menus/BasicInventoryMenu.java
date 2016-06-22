@@ -25,6 +25,17 @@ public abstract class BasicInventoryMenu implements InventoryMenu {
 
     protected final HashMap<Integer, InventoryObject> objects = new HashMap();
     protected final Inventory mainInventory;
+    protected final CustomPlugin plugin;
+
+    public BasicInventoryMenu(CustomPlugin plugin, String name, int totalLanes) {
+        this.mainInventory = InventoryUtils.createInventory(name, totalLanes);
+        this.plugin = plugin;
+    }
+
+    public BasicInventoryMenu(CustomPlugin plugin, Inventory bukkitInventory) {
+        this.mainInventory = bukkitInventory;
+        this.plugin = plugin;
+    }
 
     public void fill(ItemStack i) {
         for (int j = 0; j < mainInventory.getSize(); j++) {
@@ -40,14 +51,6 @@ public abstract class BasicInventoryMenu implements InventoryMenu {
     public void clearAndFill(ItemStack i) {
         clear();
         fill(i);
-    }
-
-    public BasicInventoryMenu(String name, int totalLanes) {
-        this.mainInventory = InventoryUtils.createInventory(name, totalLanes);
-    }
-
-    public BasicInventoryMenu(Inventory bukkitInventory) {
-        this.mainInventory = bukkitInventory;
     }
 
     @Override
@@ -74,7 +77,7 @@ public abstract class BasicInventoryMenu implements InventoryMenu {
 
     @Override
     public InventoryMenu initialSetup() {
-        CustomPlugin.registerListener(this);
+        plugin.registerListener(this);
         setupItems();
         return this;
     }
@@ -148,7 +151,7 @@ public abstract class BasicInventoryMenu implements InventoryMenu {
 
     @Override
     public void disable() {
-        CustomPlugin.unregisterListener(this);
+        plugin.unregisterListener(this);
     }
 
 }
