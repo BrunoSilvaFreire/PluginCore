@@ -1,3 +1,5 @@
+# STOP RIGHT THERE
+This is extremely old and cringy, the project you should actually look at is [here](https://github.com/DDevilISL/ShiroiFramework)
 # PluginCore
 A framework that makes developing plugins much more easier and fun :D
 Some features:
